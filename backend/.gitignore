@@ -10,3 +10,6 @@ wheels/
 .env
 # Virtual environments
 .venv
+
+.claude/settings.local.json
+.mcp.json
