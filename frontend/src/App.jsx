@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import TestCreate from './pages/TestCreate';
+import TestSuite from './components/TestSuite';
 import TestSuiteDashboard from './components/TestSuiteDashboard';
 import './App.css';
 
@@ -7,12 +7,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Test Suite - main page */}
+        <Route path="/" element={<TestSuite />} />
+        <Route path="/tests" element={<TestSuite />} />
+        
         {/* Dashboard - teammate's work */}
-        <Route path="/" element={<TestSuiteDashboard />} />
         <Route path="/dashboard" element={<TestSuiteDashboard />} />
         
         {/* Test Creation Page - your work */}
-        <Route path="/test/create" element={<TestCreate />} />
+        {/* <Route path="/test/create" element={<TestCreate />} /> */}
       </Routes>
     </BrowserRouter>
   );
