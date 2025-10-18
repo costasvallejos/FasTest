@@ -13,12 +13,12 @@ function StepBlock({ step, onEdit, onDelete }) {
 
   const getColorClasses = (type) => {
     const colors = {
-      navigate: 'bg-blue-50 border-blue-200',
-      input: 'bg-purple-50 border-purple-200',
-      click: 'bg-orange-50 border-orange-200',
-      verify: 'bg-green-50 border-green-200',
-      wait: 'bg-yellow-50 border-yellow-200',
-      default: 'bg-gray-50 border-gray-200'
+      navigate: 'bg-blue-600 border-blue-400 text-white',
+      input: 'bg-purple-600 border-purple-400 text-white',
+      click: 'bg-orange-600 border-orange-400 text-white',
+      verify: 'bg-green-600 border-green-400 text-white',
+      wait: 'bg-yellow-600 border-yellow-400 text-white',
+      default: 'bg-gray-600 border-gray-400 text-white'
     };
     return colors[type] || colors.default;
   };
