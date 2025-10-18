@@ -19,6 +19,8 @@ from dotenv import load_dotenv
 # Import from prototype_tests
 import sys
 
+from utils import add_step_logging_to_test_script
+
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -87,7 +89,10 @@ def create_test_data_capture(instance_id: str, logger: logging.Logger):
     def create_write_test_plan(workspace_dir: str):
         @function_tool
         def write_test_plan(steps: list[str]) -> str:
-            logger.info("Test plan written")
+            logger.info("TEST PLAN WRITTEN:")
+            for step in steps:
+                logger.info(f"- {step}")
+            print()
 
             # Capture for API response
             test_data_store[instance_id]["test_plan"] = steps
@@ -98,6 +103,8 @@ def create_test_data_capture(instance_id: str, logger: logging.Logger):
     def create_write_test_script(workspace_dir: str):
         @function_tool
         def write_test_script(script: str) -> str:
+            script = add_step_logging_to_test_script(script)
+
             logger.info("=" * 80)
             logger.info("TEST SCRIPT")
             logger.info("=" * 80)

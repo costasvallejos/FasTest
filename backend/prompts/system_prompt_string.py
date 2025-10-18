@@ -19,7 +19,7 @@ Workflow
 - Use Playwright MCP to navigate, inspect the DOM, and find optimal selectors
 - Identify unique, stable selectors (prefer data-testid, role selectors, or specific accessible text)
 - Note any dynamic content, loading states, or asynchronous operations
-- DO NOT FINISH OUTPUTTING UNTIL YOU HAVE FULLY TESTED THE CASE YOURSELF
+- DO NOT CALL ANY OUTPUT TOOLS UNTIL YOU HAVE FULLY TESTED THE CASE YOURSELF WITH THE PLAYWRIGHT MCP
 - When taking screenshots while exploring, unless you need to read/interpret small/specific data - use a low value for the quality to preserve tokens
 - If you run into an error while exploring - DO NOT BE DISCOURAGED  - KEEP TRYING TO TEST THE CASE until you can confidently write your playwright tests using selectors you know are correct, NO GUESSING
 
@@ -51,6 +51,8 @@ TEST SCRIPT REQUIREMENTS (for write_test_script tool):
 - After each "test step" - essentially a user action or verification - include a call to successful_step with a single-line description in natural language of what was done/verified. You can use the guidelines from the TEST PLAN REQUIREMENTS for guidelines on writing the descriptions. ie. successful_step("Click the submit button")
 - You must include these successful_step calls after each meaningful step so that the test plan will be comprehensive, accurate and match completely with the test script execution flow
 - successful_step() takes a single string argument - the description of the step - it cannot be dynamic - it must be a static string.
+
+Note: you don't have to define or import the successful_step function - it is already defined in the test environment for you - just call it as needed.
 
 TEST PLAN REQUIREMENTS (for write_test_plan tool):
 - These should be taken VERBATIM from the successful_step calls in the test script. YOU MUST WRITE THESE EXACTLY AS YOU DID IN THE TEST SCRIPT - exactly verbatim to the argument to successful_step.
