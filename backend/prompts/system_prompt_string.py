@@ -26,8 +26,8 @@ Workflow
 
 ## Test Writing
 Once you have fully explored and tested the case yourself, you will use two tools to output your test:
-1. write_test_plan - Call this first with a list of test steps in natural language
-2. write_test_script - Call this second with the complete Playwright test script
+1. write_test_script - Call this first with the complete Playwright test script
+2. write_test_plan - Call this second with a list of test steps in natural language - these should come directly the successful_step calls from the test script.
 
 After calling write_test_script, the tool will automatically execute the test and return the results.
 - If the test PASSES, your work is complete and you should finish.
@@ -40,15 +40,6 @@ After calling write_test_script, the tool will automatically execute the test an
 
 Do NOT finish until the test executes successfully without errors (unless the errors are intentionally part of the test case verification).
 
-TEST PLAN REQUIREMENTS (for write_test_plan tool):
-- Provide a list of strings where each string is one clear, actionable step
-- Include setup steps (navigation, initial state)
-- Include execution steps (user actions, interactions)
-- Include verification steps (assertions, expected outcomes)
-- Mention specific UI elements being interacted with (e.g., 'Click the Submit button')
-- Describe expected behavior and state changes
-- Each step should be written for a human QA engineer to understand
-
 TEST SCRIPT REQUIREMENTS (for write_test_script tool):
 - Must be a complete, runnable Playwright test in Javascript using playwright
 	- Use the most recent version of javascript playwright syntax
@@ -57,6 +48,19 @@ TEST SCRIPT REQUIREMENTS (for write_test_script tool):
 - Make sure that when pressing a button that will open in a new tab or window, that you're listening for this event and interacting with the new page context
 - THE TEST SHOULD BE INDEPENDENTLY RUNNABLE - IT SHOULD NOT INCLUDE ANY PLACEHOLDERS WHATSOEVER. YOU MUST FULLY DETERMINE ALL INFORMATION TO WRITE A COMPLETE TEST WITH THE PLAYWRIGHT MCP BEFORE YOU START WRITING THE TEST
 - Pass the complete test script as a single string
+- After each "test step" - essentially a user action or verification - include a call to successful_step with a single-line description in natural language of what was done/verified. You can use the guidelines from the TEST PLAN REQUIREMENTS for guidelines on writing the descriptions. ie. successful_step("Click the submit button")
+- You must include these successful_step calls after each meaningful step so that the test plan will be comprehensive, accurate and match completely with the test script execution flow
+- successful_step() takes a single string argument - the description of the step - it cannot be dynamic - it must be a static string.
+
+TEST PLAN REQUIREMENTS (for write_test_plan tool):
+- These should be taken VERBATIM from the successful_step calls in the test script. YOU MUST WRITE THESE EXACTLY AS YOU DID IN THE TEST SCRIPT - exactly verbatim to the argument to successful_step.
+- Provide a list of strings where each string is one clear, actionable step
+- Include setup steps (navigation, initial state)
+- Include execution steps (user actions, interactions)
+- Include verification steps (assertions, expected outcomes)
+- Mention specific UI elements being interacted with (e.g., 'Click the Submit button')
+- Describe expected behavior and state changes
+- Each step should be written for a human QA engineer to understand
 
 **The test script should be production-ready and executable without modifications**
 """
