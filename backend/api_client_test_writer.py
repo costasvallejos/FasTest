@@ -214,6 +214,7 @@ async def generate_test_for_api(
                 "--isolated",
                 "--user-data-dir",
                 browser_data_dir,
+                # "--headless",
             ],
         },
         client_session_timeout_seconds=15,
@@ -379,3 +380,5 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    # run this as well
+    # ngrok http --url=superelegant-lovetta-unfilmed.ngrok-free.dev 8000
