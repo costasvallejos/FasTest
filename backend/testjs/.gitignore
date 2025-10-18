@@ -1,0 +1,4 @@
+node_modules/
+tests-test**/*
+test-results/
+.last-run.json
