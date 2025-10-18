@@ -9,6 +9,7 @@ function TestCreate() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [testResult, setTestResult] = useState(null);
+  const [stepStatuses, setStepStatuses] = useState({});
 
   // Mock data for demonstration
   const mockSteps = [
@@ -31,19 +32,42 @@ function TestCreate() {
   const handleRunTest = () => {
     setIsRunning(true);
     setTestResult(null);
+    setStepStatuses({}); // Reset step statuses
+    
     // Simulate test execution
     setTimeout(() => {
       const passed = Math.random() > 0.3; // 70% pass rate for demo
       if (passed) {
+        // All steps passed
+        const allPassed = {};
+        steps.forEach(step => {
+          allPassed[step.id] = 'passed';
+        });
+        setStepStatuses(allPassed);
+        
         setTestResult({
           passed: true,
           message: 'All test steps passed successfully!',
           timestamp: new Date().toLocaleTimeString()
         });
       } else {
+        // Some steps failed - stop at the failed step
+        const stepStatuses = {};
+        const failedStep = 3; // Mock failed step
+        steps.forEach(step => {
+          if (step.id < failedStep) {
+            stepStatuses[step.id] = 'passed';
+          } else if (step.id === failedStep) {
+            stepStatuses[step.id] = 'failed';
+          } else {
+            stepStatuses[step.id] = 'pending';
+          }
+        });
+        setStepStatuses(stepStatuses);
+        
         setTestResult({
           passed: false,
-          failedStep: 3,
+          failedStep: failedStep,
           screenshot: 'https://via.placeholder.com/400x300/ff6b6b/ffffff?text=Test+Failed+Screenshot',
           errorMessage: 'Password field not found - element selector changed',
           message: 'Test failed at step 3: Password field not found',
@@ -135,6 +159,7 @@ function TestCreate() {
                   <StepBlock
                     key={step.id}
                     step={step}
+                    status={stepStatuses[step.id] || 'pending'}
                     onEdit={handleEditStep}
                     onDelete={handleDeleteStep}
                   />
