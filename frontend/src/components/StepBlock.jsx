@@ -2,7 +2,14 @@ import { CheckCircle, X } from 'lucide-react';
 
 function StepBlock({ step, onEdit, onDelete, status = 'pending' }) {
   return (
-    <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm hover:shadow-md hover:bg-gray-650 transition-all duration-200 cursor-pointer">
+    <div 
+      className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm hover:shadow-md hover:bg-gray-650 transition-all duration-300 cursor-pointer"
+      style={{
+        opacity: 0,
+        transform: 'translateY(-10px)',
+        animation: 'fadeInUp 0.6s ease-out forwards'
+      }}
+    >
       <div className="flex items-center gap-3">
         <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
           <span className="text-sm font-semibold text-gray-200">{step.id}</span>
@@ -18,6 +25,19 @@ function StepBlock({ step, onEdit, onDelete, status = 'pending' }) {
           )}
         </div>
       </div>
+      
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

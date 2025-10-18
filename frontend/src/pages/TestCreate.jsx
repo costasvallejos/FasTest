@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CheckCircle2, CheckCircle } from 'lucide-react';
 import StepBlock from '../components/StepBlock';
 
 function TestCreate() {
@@ -10,6 +11,8 @@ function TestCreate() {
   const [isRunning, setIsRunning] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [stepStatuses, setStepStatuses] = useState({});
+  const [showResult, setShowResult] = useState(false);
+  const [showRunButton, setShowRunButton] = useState(false);
 
   // Mock data for demonstration
   const mockSteps = [
@@ -22,10 +25,36 @@ function TestCreate() {
 
   const handleGenerate = () => {
     setIsGenerating(true);
+    setSteps([]); // Clear existing steps
+    setShowRunButton(false);
+    setTestResult(null);
+    setStepStatuses({});
+    setShowResult(false);
+    
     // Simulate API call
     setTimeout(() => {
-      setSteps(mockSteps);
       setIsGenerating(false);
+      
+      // Animate steps appearing one by one with smooth cascading effect
+      const mockSteps = [
+        { id: 1, type: 'navigate', text: 'Navigate to /login page' },
+        { id: 2, type: 'input', text: 'Enter "user@email.com" in email field' },
+        { id: 3, type: 'input', text: 'Enter "password123" in password field' },
+        { id: 4, type: 'click', text: 'Click "Login" button' },
+        { id: 5, type: 'verify', text: 'Verify user is redirected to dashboard' }
+      ];
+      
+      // Add steps one by one with smooth timing
+      mockSteps.forEach((step, index) => {
+        setTimeout(() => {
+          setSteps(prev => [...prev, step]);
+        }, index * 150); // 150ms delay for smoother cascading
+      });
+      
+      // Show Run Test button after all steps are loaded with a slight delay
+      setTimeout(() => {
+        setShowRunButton(true);
+      }, mockSteps.length * 150 + 100);
     }, 1500);
   };
 
@@ -33,6 +62,7 @@ function TestCreate() {
     setIsRunning(true);
     setTestResult(null);
     setStepStatuses({}); // Reset step statuses
+    setShowResult(false); // Hide result initially
     
     // Simulate test execution
     setTimeout(() => {
@@ -75,6 +105,8 @@ function TestCreate() {
         });
       }
       setIsRunning(false);
+      // Show result with a slight delay for smoother transition
+      setTimeout(() => setShowResult(true), 100);
     }, 2000);
   };
 
@@ -148,10 +180,96 @@ function TestCreate() {
             <h2 className="text-lg font-semibold text-gray-100 mb-4">Test Steps</h2>
             
             {steps.length === 0 ? (
-              <div className="text-gray-400 text-center py-12 bg-gray-800 rounded-lg border-2 border-dashed border-gray-600">
-                <div className="text-4xl mb-4">🤖</div>
-                <p className="text-lg">Generate test steps to see them here</p>
-                <p className="text-sm mt-2">Enter a test description and click "Generate Test Steps"</p>
+              <div className="space-y-3">
+                {/* Empty placeholder step blocks - enough to fill the height */}
+                <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-gray-200">1</span>
+                    </div>
+                    <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-gray-200">2</span>
+                    </div>
+                    <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-gray-200">3</span>
+                    </div>
+                    <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-gray-200">4</span>
+                    </div>
+                    <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-gray-200">5</span>
+                    </div>
+                    <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-gray-200">6</span>
+                    </div>
+                    <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-gray-200">7</span>
+                    </div>
+                    <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-center mt-6">
+                  <div className="text-4xl mb-2">🤖</div>
+                  <p className="text-gray-400 text-sm">Generate test steps to see them here</p>
+                </div>
               </div>
             ) : (
               <div className="space-y-3">
@@ -165,13 +283,23 @@ function TestCreate() {
                   />
                 ))}
                 
-                <button
-                  onClick={handleRunTest}
-                  disabled={isRunning || steps.length === 0}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg mt-4 transition-all duration-200 shadow-lg"
-                >
-                  {isRunning ? 'Running Test...' : 'Run Test'}
-                </button>
+                {showRunButton && (
+                  <div 
+                    style={{
+                      opacity: 0,
+                      transform: 'translateY(-10px)',
+                      animation: 'fadeInUp 0.6s ease-out forwards'
+                    }}
+                  >
+                    <button
+                      onClick={handleRunTest}
+                      disabled={isRunning || steps.length === 0}
+                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg mt-4 transition-all duration-300 shadow-lg"
+                    >
+                      {isRunning ? 'Running Test...' : 'Run Test'}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -181,45 +309,99 @@ function TestCreate() {
             <h2 className="text-lg font-semibold text-gray-100 mb-4">Test Result</h2>
             
             {!testResult && !isRunning && (
-              <div className="bg-gray-800 rounded-lg p-8 text-center text-gray-400 border-2 border-dashed border-gray-600">
-                <div className="text-4xl mb-4">📸</div>
-                <p>Screenshot will appear here if test fails</p>
+              <div className="bg-gray-700 border border-gray-600 rounded-lg p-8 shadow-sm opacity-50 flex flex-col items-center justify-center h-[500px]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">📸</span>
+                  </div>
+                  <p className="text-gray-200 font-medium text-lg">Screenshot will appear here</p>
+                </div>
+                <p className="text-gray-400 text-sm text-center">Test results and screenshots will show in this area</p>
               </div>
             )}
             
             {isRunning && (
-              <div className="bg-gray-800 rounded-lg p-8 text-center border border-gray-700">
-                <div className="animate-spin text-4xl mb-4">⏳</div>
-                <p className="text-gray-300">Running test...</p>
-              </div>
-            )}
-            
-            {testResult && !testResult.passed && (
-              <div className="bg-gray-800 rounded-lg border border-red-600 p-4">
-                <div className="flex items-center gap-2 mb-3 text-red-400">
-                  <span className="text-2xl">❌</span>
-                  <span className="font-semibold">Test Failed at Step {testResult.failedStep}</span>
+              <div 
+                className="bg-gray-800 rounded-lg p-8 text-center border border-gray-700 transition-all duration-500 ease-in-out opacity-100 h-[500px] flex flex-col items-center justify-center"
+                style={{
+                  opacity: 0,
+                  transform: 'translateY(-10px)',
+                  animation: 'fadeInUp 0.6s ease-out forwards'
+                }}
+              >
+                <div className="flex flex-col items-center gap-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                  </div>
+                  <p className="text-gray-300 text-lg font-medium">Running test...</p>
+                  <p className="text-gray-400 text-sm">Executing Playwright tests</p>
                 </div>
-                <img 
-                  src={testResult.screenshot} 
-                  alt="Failure screenshot"
-                  className="w-full rounded border border-gray-600 mb-3"
-                />
-                <p className="text-sm text-gray-300 mb-4">{testResult.errorMessage}</p>
-                <button
-                  onClick={handleReportToJira}
-                  className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-orange-700 transition-colors"
-                >
-                  🎫 Report to Jira
-                </button>
               </div>
             )}
             
-            {testResult && testResult.passed && (
-              <div className="bg-gray-800 rounded-lg p-8 text-center border border-green-600">
-                <div className="text-6xl mb-4">✅</div>
-                <p className="text-green-400 font-semibold text-lg">All tests passed!</p>
-                <p className="text-gray-400 text-sm mt-2">Completed at {testResult.timestamp}</p>
+            {testResult && !testResult.passed && showResult && (
+              <>
+                <div 
+                  className="bg-gray-800 rounded-lg border border-red-600 p-4 transition-all duration-700 ease-out h-[500px] flex flex-col"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(-10px)',
+                    animation: 'fadeInUp 0.6s ease-out forwards'
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-3 text-red-400">
+                    <span className="text-2xl">❌</span>
+                    <span className="font-semibold">Test Failed at Step {testResult.failedStep}</span>
+                  </div>
+                  <img 
+                    src={testResult.screenshot} 
+                    alt="Failure screenshot"
+                    className="w-full rounded border border-gray-600 mb-3 flex-1 object-cover"
+                  />
+                  <p className="text-sm text-gray-300 mb-4">{testResult.errorMessage}</p>
+                </div>
+                
+                <div 
+                  className="mt-4"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(-10px)',
+                    animation: 'fadeInUp 0.6s ease-out forwards',
+                    animationDelay: '0.2s'
+                  }}
+                >
+                  <button
+                    onClick={handleReportToJira}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg"
+                  >
+                    🎫 Report to Jira
+                  </button>
+                </div>
+              </>
+            )}
+            
+            {testResult && testResult.passed && showResult && (
+              <div 
+                className="bg-gray-800 rounded-lg p-8 text-center border border-green-600 transition-all duration-700 ease-out h-[500px] flex flex-col items-center justify-center"
+                style={{
+                  opacity: 0,
+                  transform: 'translateY(-10px)',
+                  animation: 'fadeInUp 0.6s ease-out forwards'
+                }}
+              >
+                <div className="flex flex-col items-center gap-4">
+                  <CheckCircle2 
+                    className="w-16 h-16 text-green-400"
+                    style={{
+                      transform: showResult ? 'scale(1)' : 'scale(0.8)',
+                      transition: 'transform 0.5s ease-out 0.2s'
+                    }}
+                  />
+                  <p className="text-green-400 font-semibold text-xl">All tests passed!</p>
+                  <p className="text-gray-400 text-sm">Completed at {testResult.timestamp}</p>
+                </div>
               </div>
             )}
           </div>
