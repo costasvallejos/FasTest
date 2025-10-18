@@ -15,7 +15,6 @@ from fastapi import FastAPI, HTTPException
 from prompts.system_prompt_string import SYSTEM_PROMPT
 from pydantic import BaseModel
 from dotenv import load_dotenv
-import asyncio
 
 # Import from prototype_tests
 import sys
@@ -178,10 +177,8 @@ async def generate_test_for_api(
     test_case_description: str, target_url: str, instance_id: str = None
 ) -> dict:
     """Modified test generation that returns data for API response."""
-    import tiktoken
     from agents import Agent, Runner, ModelSettings
     from agents.mcp import MCPServerStdio
-    from playwright_guidelines import playwright_guidelines
 
     # Generate instance ID if not provided
     if not instance_id:
@@ -300,7 +297,7 @@ async def generate_test_endpoint(request: TestGenerationRequest):
 
     # Log request start to main console
     print(f"\n{'='*80}")
-    print(f"New test generation request started")
+    print("New test generation request started")
     print(f"Instance ID: {instance_id}")
     print(f"Target URL: {request.target_url}")
     print(f"Test Case: {request.test_case_description}")
