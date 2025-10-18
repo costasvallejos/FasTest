@@ -145,7 +145,7 @@ function TestCreate() {
                   disabled={isRunning || steps.length === 0}
                   className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg mt-4 transition-all duration-200 shadow-lg"
                 >
-                  {isRunning ? 'Running Test...' : '▶️ Run Test'}
+                  {isRunning ? 'Running Test...' : 'Run Test'}
                 </button>
               </div>
             )}

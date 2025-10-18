@@ -13,33 +13,28 @@ function StepBlock({ step, onEdit, onDelete }) {
 
   const getColorClasses = (type) => {
     const colors = {
-      navigate: 'bg-blue-600 border-blue-400 text-white',
-      input: 'bg-purple-600 border-purple-400 text-white',
-      click: 'bg-orange-600 border-orange-400 text-white',
-      verify: 'bg-green-600 border-green-400 text-white',
-      wait: 'bg-yellow-600 border-yellow-400 text-white',
-      default: 'bg-gray-600 border-gray-400 text-white'
+      navigate: 'bg-blue-100',
+      input: 'bg-purple-100',
+      click: 'bg-orange-100',
+      verify: 'bg-green-100',
+      wait: 'bg-yellow-100',
+      default: 'bg-gray-100'
     };
     return colors[type] || colors.default;
   };
 
   return (
-    <div className={`${getColorClasses(step.type)} border rounded-lg p-4 mb-3`}>
+    <div className={`${getColorClasses(step.type)} border-2 border-gray-400 p-4 shadow-sm transform hover:scale-105 transition-all duration-200 cursor-pointer relative`} 
+         style={{
+           clipPath: 'polygon(calc(50% - 10px) 0%, calc(50% + 10px) 0%, calc(50% + 10px) 6px, 100% 6px, 100% 100%, 0% 100%, 0% 6px, calc(50% - 10px) 6px)',
+           marginBottom: '-6px'
+         }}>
+      {/* Bottom tab that extends to next block */}
+      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-5 h-2 bg-gray-900 rounded-t-full"></div>
+      
       <div className="flex items-center gap-3">
-        <span className="text-2xl">{getIcon(step.type)}</span>
-        <p className="flex-1 text-gray-800">{step.text}</p>
-        <button 
-          onClick={() => onEdit(step.id)} 
-          className="text-sm text-blue-600 hover:underline"
-        >
-          Edit
-        </button>
-        <button 
-          onClick={() => onDelete(step.id)} 
-          className="text-sm text-red-600 hover:underline"
-        >
-          Delete
-        </button>
+        <span className="text-2xl text-gray-700">{getIcon(step.type)}</span>
+        <p className="flex-1 text-gray-800 font-medium text-lg">{step.text}</p>
       </div>
     </div>
   );
