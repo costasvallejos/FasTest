@@ -310,6 +310,8 @@ function TestCreate() {
         onConfirm={handleJiraModalConfirm}
         testName={name}
         testDescription={description}
+        testUrl={url}
+        testSteps={steps}
       />
       {showJiraModal && console.log('Modal props:', { showJiraModal, name, description })}
 

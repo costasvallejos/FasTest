@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createJiraIssue } from '../backendApi/createJiraIssue';
 
-function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription }) {
+function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription, testUrl, testSteps }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -11,14 +11,40 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription 
   // Update form fields when props change
   useEffect(() => {
     if (isOpen) {
-      console.log('Modal opened with:', { testName, testDescription });
-      setName(testName || '');
-      setDescription(testDescription || '');
+      console.log('Modal opened with:', { testName, testDescription, testUrl, testSteps });
+
+      // Format the issue name
+      const formattedName = testName ? `E2E Test Fail: ${testName}` : '';
+
+      // Format the description with test details
+      let formattedDescription = '';
+
+      if (testName) {
+        formattedDescription += `The E2E test "${testName}" is failing.\n\n`;
+      }
+
+      if (testUrl) {
+        formattedDescription += `URL: ${testUrl}\n\n`;
+      }
+
+      if (testDescription) {
+        formattedDescription += `Original Description:\n${testDescription}\n\n`;
+      }
+
+      if (testSteps && testSteps.length > 0) {
+        formattedDescription += `Reproduction Steps:\n`;
+        testSteps.forEach((step, index) => {
+          formattedDescription += `${index + 1}. ${step.text}\n`;
+        });
+      }
+
+      setName(formattedName);
+      setDescription(formattedDescription.trim());
       setError(null);
       setSuccess(null);
       setIsLoading(false);
     }
-  }, [isOpen, testName, testDescription]);
+  }, [isOpen, testName, testDescription, testUrl, testSteps]);
 
   const handleConfirm = async () => {
     if (!name.trim() || !description.trim()) {
@@ -99,7 +125,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription 
               }}
               disabled={isLoading}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700"
-              placeholder="Enter issue name"
+              placeholder={"E2E Test Fail: \"Test Name\""}
             />
           </div>
           
@@ -115,8 +141,8 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription 
               }}
               disabled={isLoading}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700"
-              placeholder="Enter issue description"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-600"
+              placeholder="Test failure details, URL, and reproduction steps will be auto-filled..."
             />
           </div>
         </div>
