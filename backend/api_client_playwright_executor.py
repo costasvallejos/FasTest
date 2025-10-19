@@ -1,5 +1,6 @@
 import os
 import logging
+import uuid
 
 from utils import (
     create_workspace,
@@ -9,12 +10,12 @@ from utils import (
 )
 
 
-def setup_execution_logger(test_id: str, workspace_dir: str) -> logging.Logger:
+def setup_execution_logger(execution_id: str, workspace_dir: str) -> logging.Logger:
     """Create a logger for test execution."""
     log_dir = os.path.join(workspace_dir, "logs")
     os.makedirs(log_dir, exist_ok=True)
 
-    logger = logging.getLogger(f"test_exec_{test_id}")
+    logger = logging.getLogger(f"test_exec_{execution_id}")
     logger.setLevel(logging.INFO)
     logger.propagate = False
 
@@ -49,11 +50,15 @@ def execute_playwright_test(test_id: str) -> dict:
     """
     from supabase_client import get_supabase_client
 
-    # Create workspace first so we can set up logging
-    workspace_dir, _ = create_workspace(test_id)
-    logger = setup_execution_logger(test_id, workspace_dir)
+    # Generate unique execution ID for this request
+    execution_id = str(uuid.uuid4())[:8]
 
-    logger.info(f"Starting test execution for test ID: {test_id}")
+    # Create workspace first so we can set up logging
+    workspace_dir, _ = create_workspace(execution_id)
+    logger = setup_execution_logger(execution_id, workspace_dir)
+
+    logger.info(f"Execution ID: {execution_id}")
+    logger.info(f"Test ID: {test_id}")
     logger.info(f"Workspace directory: {workspace_dir}")
 
     try:
@@ -121,6 +126,7 @@ def execute_playwright_test(test_id: str) -> dict:
             "test_plan": test_plan,
             "workspace_dir": workspace_dir,
             "log_path": log_path,
+            "execution_id": execution_id,
         }
 
     except Exception as e:

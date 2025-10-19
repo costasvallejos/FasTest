@@ -178,16 +178,19 @@ async def execute_test_endpoint(request: TestExecutionRequest):
             status_code=500, detail="SUPABASE_URL and SUPABASE_KEY not configured on server"
         )
 
-    print(f"\n{'='*80}")
-    print("Test execution request started")
-    print(f"Test ID: {request.test_id}")
-    print(f"{'='*80}\n")
-
     try:
         result = execute_playwright_test(request.test_id)
 
-        # Log the log file path to main console
+        # Log execution details to main console
+        execution_id = result.get("execution_id")
         log_path = result.get("log_path")
+
+        print(f"\n{'='*80}")
+        print("Test execution request started")
+        print(f"Execution ID: {execution_id}")
+        print(f"Test ID: {request.test_id}")
+        print(f"{'='*80}\n")
+
         if log_path:
             print(f"Log Path: {log_path}\n")
 
