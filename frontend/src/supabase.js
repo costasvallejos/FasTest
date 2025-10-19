@@ -71,5 +71,6 @@ export function getScreenshotUrl(screenshotId) {
     .from('Screenshots')
     .getPublicUrl(screenshotId);
 
-  return data?.publicUrl || null;
+
+  return data?.publicUrl ? data.publicUrl + ".png" : null;
 }
