@@ -1,0 +1,14 @@
+modules:
+  jira:command:
+    - key: fastest-forge-app-modal-command-with-shortcut
+      title: fastest-forge-app
+      shortcut: e t
+      target:
+        resource: main
+resources:
+  - key: main
+    path: static/hello-world/build
+app:
+  runtime:
+    name: nodejs20.x
+  id: ari:cloud:ecosystem::app/ed1bd449-61e8-45bc-a783-3dcec27464bf
