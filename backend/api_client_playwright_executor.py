@@ -19,12 +19,14 @@ def execute_playwright_test(test_id: str) -> dict:
     Returns:
         dict with success status, output, and other test execution details
     """
-    from supabase_client import supabase
+    from supabase_client import get_supabase_client
 
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 
     try:
+        supabase = get_supabase_client()
+
         # Fetch test data from Supabase
         result = (
             supabase.table("tests")
