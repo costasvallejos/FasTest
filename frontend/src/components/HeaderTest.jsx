@@ -119,7 +119,7 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 py-2 px-6">
         <div className="flex items-center justify-between">
           {/* Left Section - Icon and Title */}
           <div className="flex items-center gap-4">
