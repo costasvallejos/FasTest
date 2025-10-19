@@ -92,7 +92,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 max-w-md mx-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-gray-200 relative">
+      <div className="bg-white rounded-lg p-8 w-[500px] max-w-2xl mx-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-gray-200 relative">
         <button
           onClick={handleCancel}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -148,7 +148,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
                 setDescription(e.target.value);
               }}
               disabled={isLoading}
-              rows={4}
+              rows={8}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-600"
               placeholder="Test failure details, URL, and reproduction steps will be auto-filled..."
             />
