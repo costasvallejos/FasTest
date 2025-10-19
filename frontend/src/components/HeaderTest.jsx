@@ -133,7 +133,7 @@ const HeaderTest = ({ onTestCreated }) => {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Enter test name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors text-black bg-white"
                   required
                 />
               </div>
@@ -150,7 +150,7 @@ const HeaderTest = ({ onTestCreated }) => {
                   value={formData.url}
                   onChange={handleInputChange}
                   placeholder="https://example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors text-black bg-white"
                   required
                 />
               </div>
@@ -167,7 +167,7 @@ const HeaderTest = ({ onTestCreated }) => {
                   onChange={handleInputChange}
                   placeholder="Enter test description"
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors resize-none text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors resize-none text-black bg-white"
                   required
                 />
               </div>
