@@ -1,9 +1,12 @@
 import { Globe, CircleDashed, Wrench, Play, List, MoreHorizontal, Delete, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { supabase } from "../supabase";
+import { executeTest } from "../backendApi/generateTest";
 
-export default function TestBar({ test, onDelete }) {
+export default function TestBar({ test, onDelete, onTestUpdate }) {
     const navigate = useNavigate();
+    const [isRunning, setIsRunning] = useState(false);
 
     const handleEdit = () => {
         // Navigate to TestCreate with test ID
@@ -13,6 +16,55 @@ export default function TestBar({ test, onDelete }) {
                 mode: 'edit'
             } 
         });
+    };
+
+    const handleRunTest = async () => {
+        if (isRunning) return; // Prevent multiple simultaneous runs
+        
+        setIsRunning(true);
+        
+        // Update test status to loading
+        if (onTestUpdate) {
+            onTestUpdate(test.id, { isLoading: true, status: 'Loading...' });
+        }
+
+        try {
+            const response = await executeTest({ test_id: test.id });
+            
+            if (response.success) {
+                // Test passed
+                if (onTestUpdate) {
+                    onTestUpdate(test.id, { 
+                        isLoading: false, 
+                        last_passed: true, 
+                        status: 'Passed',
+                        lastRun: new Date().toISOString()
+                    });
+                }
+            } else {
+                // Test failed
+                if (onTestUpdate) {
+                    onTestUpdate(test.id, { 
+                        isLoading: false, 
+                        last_passed: false, 
+                        status: 'Failed',
+                        lastRun: new Date().toISOString()
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error executing test:', error);
+            // Update test status to error
+            if (onTestUpdate) {
+                onTestUpdate(test.id, { 
+                    isLoading: false, 
+                    status: 'Error',
+                    lastRun: new Date().toISOString()
+                });
+            }
+        } finally {
+            setIsRunning(false);
+        }
     };
 
     const handleDelete = async (id) => {
@@ -138,10 +190,20 @@ export default function TestBar({ test, onDelete }) {
                         <Wrench className="h-4 w-4 text-gray-600" />
                     </button>
                     <button 
-                        className="p-2 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors"
-                        title="Run test"
+                        onClick={handleRunTest}
+                        disabled={isRunning || test.isLoading}
+                        className={`p-2 border border-gray-200 rounded-lg transition-colors ${
+                            isRunning || test.isLoading 
+                                ? 'bg-gray-100 cursor-not-allowed' 
+                                : 'bg-white hover:bg-gray-100'
+                        }`}
+                        title={isRunning || test.isLoading ? "Test is running..." : "Run test"}
                     >
-                        <Play className="h-4 w-4 text-gray-600" />
+                        <Play className={`h-4 w-4 ${
+                            isRunning || test.isLoading 
+                                ? 'text-gray-400' 
+                                : 'text-gray-600'
+                        }`} />
                     </button>
                     <button 
                         className="p-2 bg-white hover:bg-red-50 border border-gray-200 rounded-lg transition-colors" 

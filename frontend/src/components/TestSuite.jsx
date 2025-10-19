@@ -16,6 +16,16 @@ export default function TestSuite() {
         setTests(prevTests => prevTests.filter(test => test.id !== testId));
     };
 
+    const handleTestUpdate = (testId, updates) => {
+        setTests(prevTests => 
+            prevTests.map(test => 
+                test.id === testId 
+                    ? { ...test, ...updates }
+                    : test
+            )
+        );
+    };
+
     const handleTestCreated = (newTest) => {
         setTests(prevTests => {
             // If this is updating an existing loading test, replace it
@@ -154,7 +164,7 @@ export default function TestSuite() {
                         </div>
                     </div>
                     
-                    <TestTable tests={tests} onDelete={handleDeleteTest} searchQuery={searchQuery} />
+                    <TestTable tests={tests} onDelete={handleDeleteTest} onTestUpdate={handleTestUpdate} searchQuery={searchQuery} />
                 </div>
             )}
         </div>
