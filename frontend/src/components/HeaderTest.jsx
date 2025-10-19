@@ -123,9 +123,7 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
         <div className="flex items-center justify-between">
           {/* Left Section - Icon and Title */}
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center">
-              <FlaskConical className="h-6 w-6 text-white" />
-            </div>
+            <FlaskConical className="h-9 w-9 text-[#C084FC]" />
             <img src={logo} alt="Logo" className="h-20 w-48" />
           </div>
 
