@@ -26,5 +26,6 @@ export const TestExecutionResponseSchema = z
     test_plan: z.array(z.string()).nullable().optional(),
     failing_step: z.string().nullable().optional(),
     failing_step_index: z.number().int().nullable().optional(),
+    screenshot_id: z.string().nullable().optional(),
   })
   .strict();

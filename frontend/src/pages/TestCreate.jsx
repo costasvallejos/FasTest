@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase, fetchTestById, updateTestOnSuccess, updateTestOnFailure } from '../supabase';
 import { executeTest } from '../backendApi/generateTest';
+import { useTestGeneration } from '../hooks/useTestGeneration';
 import TestHeader from '../components/TestHeader';
 import TestConfigurationPanel from '../components/TestConfigurationPanel';
 import TestStepsPanel from '../components/TestStepsPanel';
@@ -12,13 +13,13 @@ function TestCreate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id; // If there's an ID in the URL, we're in edit mode
-  
+  const { generate, isGenerating } = useTestGeneration();
+
   // State management
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [url, setUrl] = useState('');
   const [steps, setSteps] = useState([]);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [stepStatuses, setStepStatuses] = useState({});
@@ -112,39 +113,44 @@ function TestCreate() {
     loadTestData();
   }, [id, isEditMode, navigate]);
 
-  const handleGenerate = () => {
-    setIsGenerating(true);
-    setSteps([]); // Clear existing steps
+  const handleGenerate = async () => {
+    if (!name.trim() || !url.trim() || !description.trim()) {
+      alert('Please fill in all fields (name, URL, and description)');
+      return;
+    }
+
+    if (!id) {
+      alert('Test must be saved before regenerating steps');
+      return;
+    }
+
+    // Clear existing UI state
+    setSteps([]);
     setShowRunButton(false);
     setTestResult(null);
     setStepStatuses({});
     setShowResult(false);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsGenerating(false);
-      
-      // Animate steps appearing one by one with smooth cascading effect
-      const mockSteps = [
-        { id: 1, type: 'navigate', text: 'Navigate to /login page' },
-        { id: 2, type: 'input', text: 'Enter "user@email.com" in email field' },
-        { id: 3, type: 'input', text: 'Enter "password123" in password field' },
-        { id: 4, type: 'click', text: 'Click "Login" button' },
-        { id: 5, type: 'verify', text: 'Verify user is redirected to dashboard' }
-      ];
-      
-      // Add steps one by one with smooth timing
-      mockSteps.forEach((step, index) => {
-        setTimeout(() => {
-          setSteps(prev => [...prev, step]);
-        }, index * 150); // 150ms delay for smoother cascading
+
+    try {
+      const response = await generate({
+        testId: id,
+        url: url.trim(),
+        description: description.trim(),
       });
-      
-      // Show Run Test button after all steps are loaded with a slight delay
-      setTimeout(() => {
-        setShowRunButton(true);
-      }, mockSteps.length * 150 + 100);
-    }, 1500);
+
+      // Transform test_plan array into step objects
+      const regeneratedSteps = response.testPlan.map((stepText, index) => ({
+        id: index + 1,
+        type: 'step',
+        text: stepText
+      }));
+
+      setSteps(regeneratedSteps);
+      setShowRunButton(true);
+    } catch (error) {
+      console.error('Error regenerating test:', error);
+      alert('Failed to regenerate test steps. Please try again.');
+    }
   };
 
   const handleRunTest = async () => {
@@ -284,6 +290,7 @@ function TestCreate() {
           stepStatuses={stepStatuses}
           showRunButton={showRunButton}
           isRunning={isRunning}
+          isGenerating={isGenerating}
           onEditStep={handleEditStep}
           onDeleteStep={handleDeleteStep}
           onRunTest={handleRunTest}

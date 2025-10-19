@@ -57,7 +57,7 @@ function TestConfigurationPanel({
           disabled={isGenerating || !description.trim()}
           className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
         >
-          {isGenerating ? 'Generating...' : 'Generate Test Steps'}
+          {isGenerating ? 'Regenerating...' : 'Regenerate Test Steps'}
         </button>
       </div>
     </div>
