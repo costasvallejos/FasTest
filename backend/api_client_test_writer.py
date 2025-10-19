@@ -40,11 +40,11 @@ class TestGenerationRequest(BaseModel):
 class TestGenerationResponse(BaseModel):
     """Response model with generated test data."""
 
-    instance_id: str
-    workspace_path: str
-    test_script_path: str
-    test_plan: Optional[list[str]] = None
-    test_script: Optional[str] = None
+    # instance_id: str
+    # workspace_path: str
+    # test_script_path: str
+    test_plan: list[str]
+    test_script: str
     status: str
 
 
@@ -326,9 +326,9 @@ async def generate_test_endpoint(request: TestGenerationRequest):
         )
 
         response = TestGenerationResponse(
-            instance_id=result["instance_id"],
-            workspace_path=result["workspace_dir"],
-            test_script_path=test_script_path,
+            # instance_id=result["instance_id"],
+            # workspace_path=result["workspace_dir"],
+            # test_script_path=test_script_path,
             test_plan=result.get("test_plan"),
             test_script=result.get("test_script"),
             status="success",
