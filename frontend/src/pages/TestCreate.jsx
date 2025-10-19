@@ -26,6 +26,33 @@ function TestCreate() {
   const [showRunButton, setShowRunButton] = useState(false);
   const [showJiraModal, setShowJiraModal] = useState(false);
 
+  // Helper function to calculate step statuses based on test results
+  const calculateStepStatuses = (success, failedStepIndex, steps) => {
+    const statuses = {};
+
+    if (success) {
+      // All steps passed
+      steps.forEach(step => {
+        statuses[step.id] = 'passed';
+      });
+    } else {
+      // Test failed
+      steps.forEach(step => {
+        if (failedStepIndex !== null && failedStepIndex !== undefined) {
+          if (step.id - 1 < failedStepIndex) {
+            statuses[step.id] = 'passed';
+          } else if (step.id - 1 === failedStepIndex) {
+            statuses[step.id] = 'failed';
+          } else {
+            statuses[step.id] = 'pending';
+          }
+        }
+      });
+    }
+
+    return statuses;
+  };
+
   // Fetch test data when editing an existing test
   useEffect(() => {
     async function loadTestData() {
@@ -45,6 +72,34 @@ function TestCreate() {
             }));
             setSteps(existingSteps);
             setShowRunButton(true);
+
+            // If test has been run before, display the last run results
+            if (data.last_run_at) {
+              const statuses = calculateStepStatuses(
+                data.last_passed,
+                data.last_error_index,
+                existingSteps
+              );
+              setStepStatuses(statuses);
+
+              if (data.last_passed) {
+                setTestResult({
+                  passed: true,
+                  message: 'All test steps passed successfully!',
+                  timestamp: new Date(data.last_run_at).toLocaleTimeString()
+                });
+              } else {
+                setTestResult({
+                  passed: false,
+                  failedStep: data.last_error_index !== null ? data.last_error_index + 1 : undefined,
+                  errorMessage: data.last_error_step || 'Test execution failed',
+                  message: data.last_error_message || `Test failed${data.last_error_index !== null ? ` at step ${data.last_error_index + 1}` : ''}`,
+                  timestamp: new Date(data.last_run_at).toLocaleTimeString()
+                });
+              }
+
+              setShowResult(true);
+            }
           }
         } catch (error) {
           console.error('Error loading test:', error);
@@ -108,11 +163,8 @@ function TestCreate() {
 
       if (response.success) {
         // All steps passed
-        const allPassed = {};
-        steps.forEach(step => {
-          allPassed[step.id] = 'passed';
-        });
-        setStepStatuses(allPassed);
+        const statuses = calculateStepStatuses(true, null, steps);
+        setStepStatuses(statuses);
 
         setTestResult({
           passed: true,
@@ -123,21 +175,9 @@ function TestCreate() {
         await updateTestOnSuccess(id);
       } else {
         // Test failed
-        const stepStatuses = {};
         const failedStepIndex = response.failing_step_index;
-
-        steps.forEach(step => {
-          if (failedStepIndex !== null && failedStepIndex !== undefined) {
-            if (step.id - 1 < failedStepIndex) {
-              stepStatuses[step.id] = 'passed';
-            } else if (step.id - 1 === failedStepIndex) {
-              stepStatuses[step.id] = 'failed';
-            } else {
-              stepStatuses[step.id] = 'pending';
-            }
-          }
-        });
-        setStepStatuses(stepStatuses);
+        const statuses = calculateStepStatuses(false, failedStepIndex, steps);
+        setStepStatuses(statuses);
 
         setTestResult({
           passed: false,
