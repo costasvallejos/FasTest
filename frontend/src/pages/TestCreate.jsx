@@ -182,18 +182,18 @@ function TestCreate() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-gray-900">
+    <div className="flex flex-col h-screen w-screen bg-gray-50" style={{ scrollBehavior: 'smooth' }}>
       {/* Header with Back Button */}
-      <div className="flex items-center justify-between px-6 py-4 bg-gray-800 border-b border-gray-700">
+      <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 rounded-lg transition-all duration-200 shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Test Suite
         </button>
         <div className="flex items-center gap-4">
-          <div className="text-gray-400 text-sm">
+          <div className="text-gray-600 text-sm">
             {isEditMode ? 'Edit Test Configuration' : 'Test Creation'}
           </div>
           {isEditMode && (
@@ -210,12 +210,12 @@ function TestCreate() {
       {/* Main Content */}
       <div className="flex-1 flex">
         {/* Test Configuration Panel (33.33%) */}
-        <div className="w-1/3 p-6 border-r border-gray-700 bg-gray-900">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">Test Configuration</h2>
+        <div className="w-1/3 p-6 border-r border-gray-200 bg-white">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Test Configuration</h2>
           
           <div className="space-y-4">
-            <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+            <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Test Name
               </label>
               <input
@@ -223,25 +223,25 @@ function TestCreate() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter test name"
-                className="w-full p-3 border border-gray-500 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
               />
             </div>
 
-            <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+            <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Test Description
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="e.g., Check that a user can reset their password"
-                className="w-full p-3 border border-gray-500 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
                 rows={3}
               />
             </div>
 
-            <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+            <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Page URL
               </label>
               <input
@@ -249,14 +249,14 @@ function TestCreate() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com/login"
-                className="w-full p-3 border border-gray-500 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
               />
             </div>
 
             <button
               onClick={handleGenerate}
               disabled={isGenerating || !description.trim()}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
             >
               {isGenerating ? 'Generating...' : 'Generate Test Steps'}
             </button>
@@ -264,75 +264,75 @@ function TestCreate() {
         </div>
 
         {/* Test Steps Panel (33.33%) */}
-        <div className="w-1/3 p-6 border-r border-gray-700 bg-gray-900 overflow-y-auto">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">Test Steps</h2>
+        <div className="w-1/3 p-6 border-r border-gray-200 bg-white overflow-y-auto">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Test Steps</h2>
               
           {steps.length === 0 ? (
             <div className="space-y-3">
               {/* Empty placeholder step blocks - enough to fill the height */}
-              <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-200">1</span>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-gray-600">1</span>
                   </div>
-                  <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
                   <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-500" />
+                    <CheckCircle className="w-5 h-5 text-gray-400" />
                   </div>
                 </div>
               </div>
               
-              <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-200">2</span>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-gray-600">2</span>
                   </div>
-                  <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
                   <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-500" />
+                    <CheckCircle className="w-5 h-5 text-gray-400" />
                   </div>
                 </div>
               </div>
               
-              <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-200">3</span>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-gray-600">3</span>
                   </div>
-                  <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
                   <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-500" />
+                    <CheckCircle className="w-5 h-5 text-gray-400" />
                   </div>
                 </div>
               </div>
               
-              <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-200">4</span>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-gray-600">4</span>
                   </div>
-                  <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
                   <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-500" />
+                    <CheckCircle className="w-5 h-5 text-gray-400" />
                   </div>
                 </div>
               </div>
               
-              <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-sm opacity-50">
+              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-200">5</span>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-gray-600">5</span>
                   </div>
-                  <p className="flex-1 text-gray-200 font-medium">Step will appear here...</p>
+                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
                   <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-500" />
+                    <CheckCircle className="w-5 h-5 text-gray-400" />
                   </div>
                 </div>
               </div>
               
               <div className="text-center mt-6">
                 <div className="text-4xl mb-2">🤖</div>
-                <p className="text-gray-400 text-sm">Generate test steps to see them here</p>
+                <p className="text-gray-500 text-sm">Generate test steps to see them here</p>
               </div>
             </div>
           ) : (
@@ -358,7 +358,7 @@ function TestCreate() {
                   <button
                     onClick={handleRunTest}
                     disabled={isRunning || steps.length === 0}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg mt-4 transition-all duration-300 shadow-lg"
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg mt-4 transition-all duration-300 shadow-lg"
                   >
                     {isRunning ? 'Running Test...' : 'Run Test'}
                   </button>
@@ -369,24 +369,24 @@ function TestCreate() {
         </div>
 
         {/* Test Results Panel (33.33%) */}
-        <div className="w-1/3 p-6 bg-gray-900 overflow-y-auto">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">Test Result</h2>
+        <div className="w-1/3 p-6 bg-white overflow-y-auto">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Test Result</h2>
               
           {!testResult && !isRunning && (
-            <div className="bg-gray-700 border border-gray-600 rounded-lg p-8 shadow-sm opacity-50 flex flex-col items-center justify-center h-[500px]">
+            <div className="bg-gray-100 border border-gray-300 rounded-lg p-8 shadow-sm opacity-50 flex flex-col items-center justify-center h-[500px]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
                   <span className="text-2xl">📸</span>
                 </div>
-                <p className="text-gray-200 font-medium text-lg">Screenshot will appear here</p>
+                <p className="text-gray-600 font-medium text-lg">Screenshot will appear here</p>
               </div>
-              <p className="text-gray-400 text-sm text-center">Test results and screenshots will show in this area</p>
+              <p className="text-gray-500 text-sm text-center">Test results and screenshots will show in this area</p>
             </div>
           )}
           
           {isRunning && (
             <div 
-              className="bg-gray-800 rounded-lg p-8 text-center border border-gray-700 transition-all duration-500 ease-in-out opacity-100 h-[500px] flex flex-col items-center justify-center"
+              className="bg-gray-50 rounded-lg p-8 text-center border border-gray-200 transition-all duration-500 ease-in-out opacity-100 h-[500px] flex flex-col items-center justify-center"
               style={{
                 opacity: 0,
                 transform: 'translateY(-10px)',
@@ -395,12 +395,12 @@ function TestCreate() {
             >
               <div className="flex flex-col items-center gap-4">
                 <div className="flex space-x-2">
-                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
                 </div>
-                <p className="text-gray-300 text-lg font-medium">Running test...</p>
-                <p className="text-gray-400 text-sm">Executing Playwright tests</p>
+                <p className="text-gray-600 text-lg font-medium">Running test...</p>
+                <p className="text-gray-500 text-sm">Executing Playwright tests</p>
               </div>
             </div>
           )}
@@ -408,23 +408,23 @@ function TestCreate() {
           {testResult && !testResult.passed && showResult && (
             <>
               <div 
-                className="bg-gray-800 rounded-lg border border-red-600 p-4 transition-all duration-700 ease-out h-[500px] flex flex-col"
+                className="bg-red-50 rounded-lg border border-red-300 p-4 transition-all duration-700 ease-out h-[500px] flex flex-col"
                 style={{
                   opacity: 0,
                   transform: 'translateY(-10px)',
                   animation: 'fadeInUp 0.6s ease-out forwards'
                 }}
               >
-                <div className="flex items-center gap-2 mb-3 text-red-400">
+                <div className="flex items-center gap-2 mb-3 text-red-600">
                   <span className="text-2xl">❌</span>
                   <span className="font-semibold">Test Failed at Step {testResult.failedStep}</span>
                 </div>
                 <img 
                   src={testResult.screenshot} 
                   alt="Failure screenshot"
-                  className="w-full rounded border border-gray-600 mb-3 flex-1 object-cover"
+                  className="w-full rounded border border-gray-300 mb-3 flex-1 object-cover"
                 />
-                <p className="text-sm text-gray-300 mb-4">{testResult.errorMessage}</p>
+                <p className="text-sm text-gray-600 mb-4">{testResult.errorMessage}</p>
               </div>
               
               <div 
@@ -438,7 +438,7 @@ function TestCreate() {
               >
                 <button
                   onClick={handleReportToJira}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-2 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg"
                 >
                   🎫 Report to Jira
                 </button>
@@ -448,7 +448,7 @@ function TestCreate() {
           
           {testResult && testResult.passed && showResult && (
             <div 
-              className="bg-gray-800 rounded-lg p-8 text-center border border-green-600 transition-all duration-700 ease-out h-[500px] flex flex-col items-center justify-center"
+              className="bg-green-50 rounded-lg p-8 text-center border border-green-300 transition-all duration-700 ease-out h-[500px] flex flex-col items-center justify-center"
               style={{
                 opacity: 0,
                 transform: 'translateY(-10px)',
@@ -457,14 +457,14 @@ function TestCreate() {
             >
               <div className="flex flex-col items-center gap-4">
                 <CheckCircle2 
-                  className="w-16 h-16 text-green-400"
+                  className="w-16 h-16 text-green-600"
                   style={{
                     transform: showResult ? 'scale(1)' : 'scale(0.8)',
                     transition: 'transform 0.5s ease-out 0.2s'
                   }}
                 />
-                <p className="text-green-400 font-semibold text-xl">All tests passed!</p>
-                <p className="text-gray-400 text-sm">Completed at {testResult.timestamp}</p>
+                <p className="text-green-600 font-semibold text-xl">All tests passed!</p>
+                <p className="text-gray-500 text-sm">Completed at {testResult.timestamp}</p>
               </div>
             </div>
           )}
