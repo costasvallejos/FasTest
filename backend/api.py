@@ -58,7 +58,6 @@ class TestExecutionResponse(BaseModel):
     test_plan: Optional[list[str]] = None
     failing_step: Optional[str] = None
     failing_step_index: Optional[int] = None
-    screenshot_id: Optional[str] = None
 
 
 @app.get("/")
@@ -207,7 +206,6 @@ async def execute_test_endpoint(request: TestExecutionRequest):
             test_plan=result.get("test_plan"),
             failing_step=result.get("failing_step"),
             failing_step_index=result.get("failing_step_index"),
-            screenshot_id=result.get("screenshot_id"),
         )
 
     except ValueError as e:

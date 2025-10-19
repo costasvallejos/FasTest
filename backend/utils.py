@@ -12,24 +12,27 @@ successful_step_definition = r"""
 import * as fs from "fs";
 import * as path from "path";
 
-test.afterEach(async ({ page }, testInfo) => {
-    const outputPath = path.join(process.cwd(), 'completed_steps.json');
-    fs.writeFileSync(outputPath, JSON.stringify(completed_steps, null, 2));
+const completed_steps = [];
 
-    // Capture screenshot on test failure
-    if (testInfo.status !== 'passed') {
-        try {
-            const screenshotPath = path.join(process.cwd(), 'failure_screenshot.png');
-            await page.screenshot({ path: screenshotPath, fullPage: true });
-            const screenshotInfoPath = path.join(process.cwd(), 'failure_screenshot.json');
-            fs.writeFileSync(screenshotInfoPath, JSON.stringify({ path: screenshotPath }, null, 2));
-        } catch (error) {
-            console.error('Failed to capture screenshot:', error);
-        }
-    }
-});
+function successful_step(description) {
+    completed_steps.push(description);
+}
 
 """
+
+post_test_file_write = r"""
+test.afterEach(async () => {
+    const outputPath = path.join(process.cwd(), 'completed_steps.json');
+    fs.writeFileSync(outputPath, JSON.stringify(completed_steps, null, 2));
+});
+"""
+
+
+def add_post_test_file_write(script: str) -> str:
+    """
+    Adds the afterEach function to the end of the test script
+    """
+    return script + post_test_file_write
 
 
 def add_step_logging_to_test_script(script: str) -> str:
@@ -131,9 +134,7 @@ def setup_testjs_workspace(workspace_dir: str, logger: logging.Logger = None) ->
     os.makedirs(tests_dir, exist_ok=True)
 
     # Copy config files from original testjs
-    original_testjs = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "testjs"
-    )
+    original_testjs = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testjs")
 
     for config_file in ["playwright.config.js", "package.json"]:
         workspace_config = os.path.join(testjs_dir, config_file)
@@ -220,41 +221,6 @@ def run_tests(testjs_dir: str, logger: logging.Logger = None) -> tuple[bool, str
         if logger:
             logger.error(error_msg)
         return False, f"ERROR: {str(e)}"
-
-
-def upload_screenshot_to_supabase(screenshot_path: str) -> str:
-    """
-    Upload a screenshot to Supabase storage bucket.
-
-    Args:
-        screenshot_path: Local path to the screenshot file
-
-    Returns:
-        The unique ID (UUID) of the uploaded screenshot
-
-    Raises:
-        Exception if upload fails
-    """
-    import uuid
-    from supabase_client import get_supabase_client
-
-    # Generate unique ID for the screenshot
-    screenshot_id = str(uuid.uuid4())
-    filename = f"{screenshot_id}.png"
-
-    # Read screenshot file
-    with open(screenshot_path, "rb") as f:
-        screenshot_bytes = f.read()
-
-    # Upload to Supabase
-    supabase = get_supabase_client()
-    supabase.storage.from_("Screenshots").upload(
-        path=filename,
-        file=screenshot_bytes,
-        file_options={"content-type": "image/png"}
-    )
-
-    return screenshot_id
 
 
 def cleanup_workspace(instance_id: str, keep_tests: bool = False) -> bool:

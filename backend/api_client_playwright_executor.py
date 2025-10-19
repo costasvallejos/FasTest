@@ -4,6 +4,7 @@ import uuid
 import json
 
 from utils import (
+    add_post_test_file_write,
     create_workspace,
     setup_testjs_workspace,
     install_test_dependencies,
@@ -83,7 +84,9 @@ def execute_playwright_test(test_id: str) -> dict:
 
         test_script = result.data.get("test_script")
         test_plan = result.data.get("plan")
-        logger.info(f"Successfully fetched test data. Plan has {len(test_plan) if test_plan else 0} steps")
+        logger.info(
+            f"Successfully fetched test data. Plan has {len(test_plan) if test_plan else 0} steps"
+        )
 
         if not test_script:
             logger.error(f"Test script is empty for test id {test_id}")
@@ -95,7 +98,7 @@ def execute_playwright_test(test_id: str) -> dict:
 
         # Add step logging to test script
         logger.info("Adding step logging to test script")
-        test_script_with_logging = add_step_logging_to_test_script(test_script)
+        test_script_with_logging = add_post_test_file_write(test_script)
 
         # Write test script to file
         test_file_path = os.path.join(testjs_dir, "tests", "test.spec.js")
@@ -103,6 +106,7 @@ def execute_playwright_test(test_id: str) -> dict:
         with open(test_file_path, "w") as f:
             f.write(test_script_with_logging)
         logger.info(f"Test script written successfully")
+        logger.info(f"Test script content:\n{test_script_with_logging}")
 
         # Install dependencies
         logger.info("Installing test dependencies")
@@ -135,9 +139,13 @@ def execute_playwright_test(test_id: str) -> dict:
         # Calculate progress
         steps_completed = len(completed_steps)
         total_steps = len(test_plan) if test_plan else 0
-        progress_percentage = (steps_completed / total_steps * 100) if total_steps > 0 else 0
+        progress_percentage = (
+            (steps_completed / total_steps * 100) if total_steps > 0 else 0
+        )
 
-        logger.info(f"Test progress: {steps_completed}/{total_steps} steps ({progress_percentage:.1f}%)")
+        logger.info(
+            f"Test progress: {steps_completed}/{total_steps} steps ({progress_percentage:.1f}%)"
+        )
 
         # Determine failing step if test failed
         failing_step = None
@@ -150,41 +158,19 @@ def execute_playwright_test(test_id: str) -> dict:
             if test_plan and steps_completed < total_steps:
                 failing_step_index = steps_completed
                 failing_step = test_plan[failing_step_index]
-                logger.info(f"Failing step identified at index {failing_step_index}: {failing_step}")
+                logger.info(
+                    f"Failing step identified at index {failing_step_index}: {failing_step}"
+                )
             elif test_plan and steps_completed == total_steps:
-                logger.info("All planned steps completed but test still failed (failure outside planned steps)")
+                logger.info(
+                    "All planned steps completed but test still failed (failure outside planned steps)"
+                )
             else:
-                logger.info("No plan available or test failed before any steps executed")
+                logger.info(
+                    "No plan available or test failed before any steps executed"
+                )
         else:
             logger.info("Test passed successfully")
-
-        # Handle screenshot upload if test failed
-        screenshot_id = None
-        if not success:
-            screenshot_info_path = os.path.join(testjs_dir, "failure_screenshot.json")
-            if os.path.exists(screenshot_info_path):
-                logger.info(f"Screenshot info file found at {screenshot_info_path}")
-                try:
-                    with open(screenshot_info_path, "r") as f:
-                        screenshot_info = json.load(f)
-                    screenshot_path = screenshot_info.get("path")
-
-                    if screenshot_path and os.path.exists(screenshot_path):
-                        logger.info(f"Uploading screenshot from {screenshot_path} to Supabase")
-                        from utils import upload_screenshot_to_supabase
-                        screenshot_id = upload_screenshot_to_supabase(screenshot_path)
-                        logger.info(f"Screenshot uploaded successfully with ID: {screenshot_id}")
-
-                        # Clean up local screenshot files
-                        os.remove(screenshot_path)
-                        os.remove(screenshot_info_path)
-                        logger.info("Local screenshot files cleaned up")
-                    else:
-                        logger.warning(f"Screenshot path not found or invalid: {screenshot_path}")
-                except Exception as e:
-                    logger.error(f"Failed to upload screenshot: {e}", exc_info=True)
-            else:
-                logger.info("No screenshot info file found (test may have failed before screenshot could be captured)")
 
         # Cleanup logger handlers
         for handler in logger.handlers[:]:
@@ -204,7 +190,6 @@ def execute_playwright_test(test_id: str) -> dict:
             "progress_percentage": progress_percentage,
             "failing_step": failing_step,
             "failing_step_index": failing_step_index,
-            "screenshot_id": screenshot_id,
             "workspace_dir": workspace_dir,
             "log_path": log_path,
             "execution_id": execution_id,
