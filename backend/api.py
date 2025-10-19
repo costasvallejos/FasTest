@@ -186,6 +186,11 @@ async def execute_test_endpoint(request: TestExecutionRequest):
     try:
         result = execute_playwright_test(request.test_id)
 
+        # Log the log file path to main console
+        log_path = result.get("log_path")
+        if log_path:
+            print(f"Log Path: {log_path}\n")
+
         return TestExecutionResponse(
             success=result["success"],
             output=result["output"],
