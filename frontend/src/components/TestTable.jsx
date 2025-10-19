@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import TestBar from './TestBar';
 
-export default function TestTable({ tests = [], onDelete, searchQuery = '' }) {
+export default function TestTable({ tests = [], onDelete, onTestUpdate, searchQuery = '' }) {
     const [sortField, setSortField] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
 
@@ -126,7 +126,7 @@ export default function TestTable({ tests = [], onDelete, searchQuery = '' }) {
                             </tr>
                         ) : (
                             sortedTests.map((test, index) => (
-                                <TestBar key={test.id || index} test={test} onDelete={onDelete} />
+                                <TestBar key={test.id || index} test={test} onDelete={onDelete} onTestUpdate={onTestUpdate} />
                             ))
                         )}
                     </tbody>

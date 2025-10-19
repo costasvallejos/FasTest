@@ -77,7 +77,7 @@ function TestResultsPanel({
               onClick={onReportToJira}
               className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-2 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg"
             >
-              🎫 Report to Jira
+              Report to Jira
             </button>
           </div>
         </>
