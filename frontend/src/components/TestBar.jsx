@@ -177,17 +177,23 @@ export default function TestBar({ test, onDelete, onTestUpdate }) {
             </td>
             <td className="px-4 py-3 whitespace-nowrap">
                 <span className="text-sm text-gray-700">
-                    N/A
+                    {test.last_run_at ? new Date(test.last_run_at).toLocaleString(undefined, { 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    }) : 'N/A'}
                 </span>
             </td>
             <td className="px-4 py-3 whitespace-nowrap">
                 <div className="flex items-center gap-2">
                     <button 
                         onClick={handleEdit}
-                        className="p-2 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors"
+                        className="p-2 bg-white hover:bg-blue-50 border border-gray-200 rounded-lg transition-colors"
                         title="Edit test"
                     >
-                        <Wrench className="h-4 w-4 text-gray-600" />
+                        <Wrench className="h-4 w-4 text-blue-600" />
                     </button>
                     <button 
                         onClick={handleRunTest}
@@ -195,14 +201,14 @@ export default function TestBar({ test, onDelete, onTestUpdate }) {
                         className={`p-2 border border-gray-200 rounded-lg transition-colors ${
                             isRunning || test.isLoading 
                                 ? 'bg-gray-100 cursor-not-allowed' 
-                                : 'bg-white hover:bg-gray-100'
+                                : 'bg-white hover:bg-green-50'
                         }`}
                         title={isRunning || test.isLoading ? "Test is running..." : "Run test"}
                     >
                         <Play className={`h-4 w-4 ${
                             isRunning || test.isLoading 
                                 ? 'text-gray-400' 
-                                : 'text-gray-600'
+                                : 'text-green-600'
                         }`} />
                     </button>
                     <button 

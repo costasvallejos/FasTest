@@ -16,4 +16,5 @@ dependencies = [
       "fastapi>=0.119.0",
       "uvicorn>=0.37.0",
       "supabase>=2.22.0",
+      "jira>=3.10.5",
 ]
