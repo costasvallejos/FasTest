@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase, fetchTestById } from '../supabase';
+import { supabase, fetchTestById, updateTestOnSuccess, updateTestOnFailure } from '../supabase';
 import { executeTest } from '../backendApi/generateTest';
 import TestHeader from '../components/TestHeader';
 import TestConfigurationPanel from '../components/TestConfigurationPanel';
@@ -119,6 +119,8 @@ function TestCreate() {
           message: response.output || 'All test steps passed successfully!',
           timestamp: new Date().toLocaleTimeString()
         });
+
+        await updateTestOnSuccess(id);
       } else {
         // Test failed
         const stepStatuses = {};
@@ -143,6 +145,13 @@ function TestCreate() {
           errorMessage: response.failing_step || 'Test execution failed',
           message: response.output || `Test failed${failedStepIndex !== null ? ` at step ${failedStepIndex + 1}` : ''}`,
           timestamp: new Date().toLocaleTimeString()
+        });
+
+        // Update database with failure information
+        await updateTestOnFailure(id, {
+          errorMessage: response.output,
+          errorStep: response.failing_step,
+          errorIndex: response.failing_step_index
         });
 
         // Show Jira modal when test fails
