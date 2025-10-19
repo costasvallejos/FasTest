@@ -8,6 +8,7 @@ import TestConfigurationPanel from '../components/TestConfigurationPanel';
 import TestStepsPanel from '../components/TestStepsPanel';
 import TestResultsPanel from '../components/TestResultsPanel';
 import JiraIssueModal from '../components/JiraIssueModal';
+import smallLogo from '../assets/logo3.png';
 
 function TestCreate() {
   const navigate = useNavigate();
@@ -318,6 +319,13 @@ function TestCreate() {
         testDescription={description}
       />
       {showJiraModal && console.log('Modal props:', { showJiraModal, name, description })}
+
+      {/* Bottom-left tiny logo overlay */}
+      <img
+        src={smallLogo}
+        alt="Logo"
+        className="fixed bottom-3 left-3 h-17 w-auto opacity-80 pointer-events-none select-none"
+      />
     </div>
   );
 }
