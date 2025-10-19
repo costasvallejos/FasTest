@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase, fetchTestById } from '../supabase';
+import { executeTest } from '../backendApi/generateTest';
 import TestHeader from '../components/TestHeader';
 import TestConfigurationPanel from '../components/TestConfigurationPanel';
 import TestStepsPanel from '../components/TestStepsPanel';
@@ -90,56 +90,67 @@ function TestCreate() {
     }, 1500);
   };
 
-  const handleRunTest = () => {
+  const handleRunTest = async () => {
+    if (!id) {
+      alert('Test must be saved before running');
+      return;
+    }
+
     setIsRunning(true);
     setTestResult(null);
-    setStepStatuses({}); // Reset step statuses
-    setShowResult(false); // Hide result initially
-    
-    // Simulate test execution
-    setTimeout(() => {
-      const passed = Math.random() > 0.3; // 70% pass rate for demo
-      if (passed) {
+    setStepStatuses({});
+    setShowResult(false);
+
+    try {
+      const response = await executeTest({ test_id: id });
+
+      if (response.success) {
         // All steps passed
         const allPassed = {};
         steps.forEach(step => {
           allPassed[step.id] = 'passed';
         });
         setStepStatuses(allPassed);
-        
+
         setTestResult({
           passed: true,
-          message: 'All test steps passed successfully!',
+          message: response.output || 'All test steps passed successfully!',
           timestamp: new Date().toLocaleTimeString()
         });
       } else {
-        // Some steps failed - stop at the failed step
+        // Test failed
         const stepStatuses = {};
-        const failedStep = 3; // Mock failed step
+        const failedStepIndex = response.failing_step_index;
+
         steps.forEach(step => {
-          if (step.id < failedStep) {
-            stepStatuses[step.id] = 'passed';
-          } else if (step.id === failedStep) {
-            stepStatuses[step.id] = 'failed';
-          } else {
-            stepStatuses[step.id] = 'pending';
+          if (failedStepIndex !== null && failedStepIndex !== undefined) {
+            if (step.id - 1 < failedStepIndex) {
+              stepStatuses[step.id] = 'passed';
+            } else if (step.id - 1 === failedStepIndex) {
+              stepStatuses[step.id] = 'failed';
+            } else {
+              stepStatuses[step.id] = 'pending';
+            }
           }
         });
         setStepStatuses(stepStatuses);
-        
+
         setTestResult({
           passed: false,
-          failedStep: failedStep,
-          screenshot: 'https://via.placeholder.com/400x300/ff6b6b/ffffff?text=Test+Failed+Screenshot',
-          errorMessage: 'Password field not found - element selector changed',
-          message: 'Test failed at step 3: Password field not found',
+          failedStep: failedStepIndex !== null ? failedStepIndex + 1 : undefined,
+          errorMessage: response.failing_step || 'Test execution failed',
+          message: response.output || `Test failed${failedStepIndex !== null ? ` at step ${failedStepIndex + 1}` : ''}`,
           timestamp: new Date().toLocaleTimeString()
         });
       }
+
       setIsRunning(false);
-      // Show result with a slight delay for smoother transition
       setTimeout(() => setShowResult(true), 100);
-    }, 2000);
+    } catch (error) {
+      console.error('Error executing test:', error);
+      setIsRunning(false);
+      alert('Failed to execute test. Please try again.');
+    }
   };
 
   const handleEditStep = (stepId) => {
