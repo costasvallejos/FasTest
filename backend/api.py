@@ -66,7 +66,7 @@ class JiraIssueRequest(BaseModel):
 
     summary: str
     description: str
-    issue_type: str = "Task"
+    issue_type: str = "Bug"
 
 
 class JiraIssueResponse(BaseModel):
