@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import CreateTestModal from "./CreateTestModal";
 
 /**
  * TestSuiteDashboard.jsx — no sidebar, no Platform column
@@ -116,6 +117,7 @@ export default function TestSuiteDashboard() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [sort, setSort] = useState("lastRun.desc");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -183,7 +185,7 @@ export default function TestSuiteDashboard() {
             <button
               type="button"
               className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 md:px-6 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 shadow"
-              onClick={() => alert("Hook this to your create-test flow (modal or route).")}
+              onClick={() => setIsCreateModalOpen(true)}
             >
               <span className="hidden sm:inline">Create New Test</span>
               <span className="sm:hidden">New</span>
@@ -353,6 +355,8 @@ export default function TestSuiteDashboard() {
           </div>
         </div>
       </section>
+
+      <CreateTestModal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} />
     </div>
   );
 }
