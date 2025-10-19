@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createJiraIssue } from '../backendApi/createJiraIssue';
+import { X } from 'lucide-react';
 
 function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription, testUrl, testSteps }) {
   const [name, setName] = useState('');
@@ -71,10 +72,6 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
       if (onConfirm) {
         onConfirm(response);
       }
-
-      setTimeout(() => {
-        onClose();
-      }, 2000);
     } catch (err) {
       console.error('Failed to create Jira issue:', err);
       setError(err.message || 'Failed to create Jira issue. Please try again.');
@@ -91,7 +88,14 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 max-w-md mx-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-gray-200">
+      <div className="bg-white rounded-lg p-8 w-[500px] max-w-2xl mx-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-gray-200 relative">
+        <button
+          onClick={handleCancel}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          disabled={isLoading}
+        >
+          <X size={20} />
+        </button>
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Create Jira Issue</h2>
 
         {error && (
@@ -140,7 +144,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
                 setDescription(e.target.value);
               }}
               disabled={isLoading}
-              rows={4}
+              rows={8}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-600"
               placeholder="Test failure details, URL, and reproduction steps will be auto-filled..."
             />
@@ -152,10 +156,10 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
             type="button"
             onClick={handleCancel}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 text-white font-medium rounded-md transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#dc2626' }}
-            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = '#b91c1c')}
-            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = '#dc2626')}
+            className="flex-1 px-4 py-3 font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-2"
+            style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.15)' }}
+            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(220, 38, 38, 0.2)')}
+            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(220, 38, 38, 0.15)')}
           >
             No
           </button>
@@ -163,10 +167,10 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
             type="button"
             onClick={handleConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 text-white font-medium rounded-md transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#16a34a' }}
-            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = '#15803d')}
-            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = '#16a34a')}
+            className="flex-1 px-4 py-3 font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-2"
+            style={{ borderColor: '#16a34a', color: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.15)' }}
+            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(22, 163, 74, 0.2)')}
+            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(22, 163, 74, 0.15)')}
           >
             {isLoading ? 'Creating...' : 'Yes'}
           </button>
