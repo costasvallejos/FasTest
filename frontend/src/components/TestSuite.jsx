@@ -137,7 +137,9 @@ export default function TestSuite() {
     }
     return (
         <div className="min-h-screen bg-gray-50 p-8" style={{ scrollBehavior: 'smooth' }}>
-            <HeaderTest onTestCreated={handleTestCreated} onRefresh={refreshTests}/>
+            <HeaderTest onTestCreated={handleTestCreated} 
+            onRefresh={()=>{}}
+            />
 
             {tests.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mt-6 text-center">
