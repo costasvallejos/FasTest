@@ -14,7 +14,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
       console.log('Modal opened with:', { testName, testDescription, testUrl, testSteps });
 
       // Format the issue name
-      const formattedName = testName ? `E2E Test Fail: ${testName}` : '';
+      const formattedName = testName ? `E2E Fail: "${testName}"` : '';
 
       // Format the description with test details
       let formattedDescription = '';
@@ -125,7 +125,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
               }}
               disabled={isLoading}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700"
-              placeholder={"E2E Test Fail: \"Test Name\""}
+              placeholder={"E2E Fail: \"Test Name\""}
             />
           </div>
           
