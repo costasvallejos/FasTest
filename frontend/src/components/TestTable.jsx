@@ -60,82 +60,77 @@ export default function TestTable({ tests = [], onDelete, searchQuery = '' }) {
 
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            {/* Table Header */}
-            <div className="bg-gray-50 border-b border-gray-200">
-                <div className="px-6 py-3 flex items-center gap-4">
-                    {/* Test Name Header */}
-                    <div 
-                        className="flex-1 min-w-0 cursor-pointer hover:bg-gray-100 rounded px-2 py-1 -mx-2 -my-1 transition-colors"
-                        onClick={() => handleSort('name')}
-                    >
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-gray-700">Test Name</span>
-                            {getSortIcon('name')}
-                        </div>
-                    </div>
+            <div className="overflow-auto">
+                <table className="min-w-full text-sm border-collapse">
+                    {/* Table Header */}
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th 
+                                className="px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                onClick={() => handleSort('name')}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span>Test Name</span>
+                                    {getSortIcon('name')}
+                                </div>
+                            </th>
+                            <th 
+                                className="px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors w-20"
+                                onClick={() => handleSort('platform')}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span>Platform</span>
+                                    {getSortIcon('platform')}
+                                </div>
+                            </th>
+                            <th 
+                                className="px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                onClick={() => handleSort('url')}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span>Execution Target</span>
+                                    {getSortIcon('url')}
+                                </div>
+                            </th>
+                            <th 
+                                className="px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                onClick={() => handleSort('status')}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span>Status</span>
+                                    {getSortIcon('status')}
+                                </div>
+                            </th>
+                            <th 
+                                className="px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors w-20"
+                                onClick={() => handleSort('lastRun')}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span>Last Run</span>
+                                    {getSortIcon('lastRun')}
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
 
-                    {/* Platform Header */}
-                    <div 
-                        className="flex-shrink-0 w-20 cursor-pointer hover:bg-gray-100 rounded px-2 py-1 -mx-2 -my-1 transition-colors"
-                        onClick={() => handleSort('platform')}
-                    >
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-gray-700">Platform</span>
-                            {getSortIcon('platform')}
-                        </div>
-                    </div>
-
-                    {/* Execution Target Header */}
-                    <div 
-                        className="flex-1 min-w-0 cursor-pointer hover:bg-gray-100 rounded px-2 py-1 -mx-2 -my-1 transition-colors"
-                        onClick={() => handleSort('url')}
-                    >
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-gray-700">Execution Target</span>
-                            {getSortIcon('url')}
-                        </div>
-                    </div>
-
-                    {/* Status Header */}
-                    <div 
-                        className="flex-shrink-0 cursor-pointer hover:bg-gray-100 rounded px-2 py-1 -mx-2 -my-1 transition-colors"
-                        onClick={() => handleSort('status')}
-                    >
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-gray-700">Status</span>
-                            {getSortIcon('status')}
-                        </div>
-                    </div>
-
-                    {/* Last Run Header */}
-                    <div 
-                        className="flex-shrink-0 w-20 cursor-pointer hover:bg-gray-100 rounded px-2 py-1 -mx-2 -my-1 transition-colors"
-                        onClick={() => handleSort('lastRun')}
-                    >
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-gray-700">Last Run</span>
-                            {getSortIcon('lastRun')}
-                        </div>
-                    </div>
-
-                    {/* Actions Header */}
-                    <div className="flex-shrink-0">
-                        <span className="text-sm font-semibold text-gray-700">Actions</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Table Body */}
-            <div>
-                {sortedTests.length === 0 ? (
-                    <div className="px-6 py-8 text-center">
-                        <p className="text-gray-500">No tests found</p>
-                    </div>
-                ) : (
-                    sortedTests.map((test, index) => (
-                        <TestBar key={test.id || index} test={test} onDelete={onDelete} />
-                    ))
-                )}
+                    {/* Table Body */}
+                    <tbody>
+                        {sortedTests.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                                    No tests found
+                                </td>
+                            </tr>
+                        ) : (
+                            sortedTests.map((test, index) => (
+                                <TestBar key={test.id || index} test={test} onDelete={onDelete} />
+                            ))
+                        )}
+                    </tbody>
+                </table>
             </div>
 
             {/* Footer */}
