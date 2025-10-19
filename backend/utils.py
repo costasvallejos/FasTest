@@ -9,6 +9,9 @@ from agents import ItemHelpers, StreamEvent
 
 
 successful_step_definition = r"""
+import { test } from "@playwright/test";
+import * as fs from "fs";
+import * as path from "path";
 
 let completed_steps = []
 
@@ -17,6 +20,11 @@ function successful_step(description) {
     // Logs the successful completion of a test step.
     completed_steps.push(description)
 }
+
+test.afterEach(async () => {
+    const outputPath = path.join(process.cwd(), 'completed_steps.json');
+    fs.writeFileSync(outputPath, JSON.stringify(completed_steps, null, 2));
+});
 
 """
 
