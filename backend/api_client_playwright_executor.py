@@ -139,20 +139,25 @@ def execute_playwright_test(test_id: str) -> dict:
         # Handle screenshot on failure
         screenshot_id = None
         screenshot_id_path = os.path.join(testjs_dir, "screenshot_id.json")
+        logger.info(f"Checking for screenshot at {screenshot_id_path}")
         if os.path.exists(screenshot_id_path):
             logger.info(f"Screenshot ID file found at {screenshot_id_path}")
             try:
                 with open(screenshot_id_path, "r") as f:
                     screenshot_data = json.load(f)
                     screenshot_id = screenshot_data.get("screenshot_id")
+                    logger.info(f"Screenshot ID from file: {screenshot_id}")
 
                 if screenshot_id:
                     screenshot_file_path = os.path.join(testjs_dir, f"{screenshot_id}.png")
+                    logger.info(f"Looking for screenshot file at {screenshot_file_path}")
                     if os.path.exists(screenshot_file_path):
-                        logger.info(f"Uploading screenshot {screenshot_id} to Supabase")
+                        logger.info(f"Screenshot file found, uploading {screenshot_id} to Supabase Screenshots bucket")
 
                         with open(screenshot_file_path, "rb") as screenshot_file:
                             screenshot_bytes = screenshot_file.read()
+
+                        logger.info(f"Screenshot file size: {len(screenshot_bytes)} bytes")
 
                         upload_result = supabase.storage.from_("Screenshots").upload(
                             path=f"{screenshot_id}.png",
@@ -160,17 +165,21 @@ def execute_playwright_test(test_id: str) -> dict:
                             file_options={"content-type": "image/png"}
                         )
 
-                        logger.info(f"Screenshot uploaded successfully: {screenshot_id}")
+                        logger.info(f"Screenshot uploaded successfully: {screenshot_id}, Upload result: {upload_result}")
 
                         # Clean up local screenshot file
                         os.remove(screenshot_file_path)
-                        logger.info(f"Removed local screenshot file")
+                        logger.info(f"Removed local screenshot file at {screenshot_file_path}")
                     else:
                         logger.warning(f"Screenshot file not found at {screenshot_file_path}")
                         screenshot_id = None
+                else:
+                    logger.warning("Screenshot ID is empty or None in screenshot_id.json")
             except Exception as e:
-                logger.warning(f"Failed to upload screenshot: {e}")
+                logger.error(f"Failed to upload screenshot: {e}", exc_info=True)
                 screenshot_id = None
+        else:
+            logger.info("No screenshot_id.json found - test likely passed or screenshot capture failed")
 
         # Calculate progress
         steps_completed = len(completed_steps)

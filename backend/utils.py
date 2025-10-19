@@ -29,22 +29,30 @@ test.afterEach(async () => {
 
 screenshot_on_failure = r"""
 test.afterAll(async ({ page }, testInfo) => {
+    console.log(`[Screenshot] Test status: ${testInfo.status}, Expected: ${testInfo.expectedStatus}`);
     if (testInfo.status !== testInfo.expectedStatus) {
+        console.log('[Screenshot] Test failed, capturing screenshot...');
         try {
             const crypto = await import('crypto');
             const screenshotId = crypto.randomUUID();
             const screenshotPath = path.join(process.cwd(), `${screenshotId}.png`);
+            console.log(`[Screenshot] Screenshot ID: ${screenshotId}`);
+            console.log(`[Screenshot] Screenshot path: ${screenshotPath}`);
 
             await page.screenshot({
                 path: screenshotPath,
                 fullPage: false
             });
+            console.log('[Screenshot] Screenshot captured successfully');
 
             const idOutputPath = path.join(process.cwd(), 'screenshot_id.json');
             fs.writeFileSync(idOutputPath, JSON.stringify({ screenshot_id: screenshotId }, null, 2));
+            console.log(`[Screenshot] Screenshot ID written to ${idOutputPath}`);
         } catch (error) {
-            console.error('Failed to capture screenshot:', error);
+            console.error('[Screenshot] Failed to capture screenshot:', error);
         }
+    } else {
+        console.log('[Screenshot] Test passed, no screenshot needed');
     }
 });
 """
