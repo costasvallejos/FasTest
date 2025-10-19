@@ -1,7 +1,7 @@
 import { Globe, CircleDashed, Wrench, Play, List, MoreHorizontal, Delete, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { supabase } from "../supabase";
+import { supabase, updateTestOnSuccess, updateTestOnFailure, getScreenshotUrl } from "../supabase";
 import { executeTest } from "../backendApi/generateTest";
 
 export default function TestBar({ test, onDelete, onTestUpdate }) {
@@ -32,23 +32,36 @@ export default function TestBar({ test, onDelete, onTestUpdate }) {
             const response = await executeTest({ test_id: test.id });
             
             if (response.success) {
-                // Test passed
+                // Test passed - update database
+                await updateTestOnSuccess(test.id);
+                
+                // Update local state
                 if (onTestUpdate) {
                     onTestUpdate(test.id, { 
                         isLoading: false, 
                         last_passed: true, 
                         status: 'Passed',
-                        lastRun: new Date().toISOString()
+                        last_run_at: new Date().toISOString()
                     });
                 }
             } else {
-                // Test failed
+                // Test failed - update database
+                const screenshotUrl = response.screenshot_id ? getScreenshotUrl(response.screenshot_id) : null;
+                
+                await updateTestOnFailure(test.id, {
+                    errorMessage: response.output,
+                    errorStep: response.failing_step,
+                    errorIndex: response.failing_step_index,
+                    screenshotId: response.screenshot_id
+                });
+                
+                // Update local state
                 if (onTestUpdate) {
                     onTestUpdate(test.id, { 
                         isLoading: false, 
                         last_passed: false, 
                         status: 'Failed',
-                        lastRun: new Date().toISOString()
+                        last_run_at: new Date().toISOString()
                     });
                 }
             }
@@ -58,8 +71,7 @@ export default function TestBar({ test, onDelete, onTestUpdate }) {
             if (onTestUpdate) {
                 onTestUpdate(test.id, { 
                     isLoading: false, 
-                    status: 'Error',
-                    lastRun: new Date().toISOString()
+                    status: 'Error'
                 });
             }
         } finally {
