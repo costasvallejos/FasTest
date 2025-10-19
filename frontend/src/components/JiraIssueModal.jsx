@@ -98,7 +98,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription 
                 setName(e.target.value);
               }}
               disabled={isLoading}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700"
               placeholder="Enter issue name"
             />
           </div>
@@ -115,7 +115,7 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription 
               }}
               disabled={isLoading}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700"
               placeholder="Enter issue description"
             />
           </div>
