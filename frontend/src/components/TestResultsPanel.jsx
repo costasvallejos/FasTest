@@ -12,10 +12,7 @@ function TestResultsPanel({
 
       {!testResult && !isRunning && (
         <div className="bg-gray-100 border border-gray-300 rounded-lg p-8 shadow-sm opacity-50 flex flex-col items-center justify-center h-[500px]">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex-shrink-0 w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-2xl">📸</span>
-            </div>
+          <div className="mb-4">
             <p className="text-gray-600 font-medium text-lg">Screenshot will appear here</p>
           </div>
           <p className="text-gray-500 text-sm text-center">Test results and screenshots will show in this area</p>
