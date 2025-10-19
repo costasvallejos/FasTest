@@ -7,12 +7,17 @@ Each request generates tests in an isolated workspace.
 
 import os
 import uuid
-import tempfile
-import shutil
 import logging
 import sys
 from prompts.system_prompt_string import SYSTEM_PROMPT
-from utils import add_step_logging_to_test_script, print_result_stream
+from utils import (
+    add_step_logging_to_test_script,
+    print_result_stream,
+    setup_testjs_workspace,
+    install_test_dependencies,
+    run_tests,
+    create_workspace,
+)
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -82,66 +87,25 @@ def create_test_data_capture(instance_id: str, logger: logging.Logger):
             # Capture for API response
             test_data_store[instance_id]["test_script"] = script
 
-            # Write to workspace
-            testjs_dir = os.path.join(workspace_dir, "testjs")
-            tests_dir = os.path.join(testjs_dir, "tests")
-            output_path = os.path.join(tests_dir, "test.spec.js")
-
-            os.makedirs(tests_dir, exist_ok=True)
+            # Setup workspace and write script
+            testjs_dir = setup_testjs_workspace(workspace_dir, logger)
+            output_path = os.path.join(testjs_dir, "tests", "test.spec.js")
 
             with open(output_path, "w") as f:
                 f.write(script)
 
             logger.info(f"Test script written to: {output_path}")
 
-            # Copy configs
-            import subprocess
-
-            original_testjs = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "testjs"
-            )
-
-            for config_file in ["playwright.config.js", "package.json"]:
-                workspace_config = os.path.join(testjs_dir, config_file)
-                if not os.path.exists(workspace_config):
-                    original_config = os.path.join(original_testjs, config_file)
-                    if os.path.exists(original_config):
-                        shutil.copy2(original_config, workspace_config)
-
-            # Install dependencies if needed
-            node_modules = os.path.join(testjs_dir, "node_modules")
-            if not os.path.exists(node_modules):
-                logger.info(f"Installing dependencies in {testjs_dir}...")
-                try:
-                    subprocess.run(
-                        ["npm", "install"],
-                        cwd=testjs_dir,
-                        capture_output=True,
-                        text=True,
-                        timeout=120,
-                    )
-                except Exception as e:
-                    logger.warning(f"Failed to install dependencies: {e}")
+            # Install dependencies
+            install_test_dependencies(testjs_dir, logger)
 
             # Run tests
-            logger.info(f"Running tests from {testjs_dir}...")
-            try:
-                result = subprocess.run(
-                    ["npm", "run", "test"],
-                    cwd=testjs_dir,
-                    capture_output=True,
-                    text=True,
-                    timeout=60,
-                )
-                output = f"STDOUT:\n{result.stdout}\n\nSTDERR:\n{result.stderr}\n\nReturn Code: {result.returncode}"
-                logger.info(f"Test execution completed. Output:\n{output}")
+            success, output = run_tests(testjs_dir, logger)
+
+            if success:
                 return f"Test Execution Results:\n{output}"
-            except subprocess.TimeoutExpired:
-                logger.error("Test execution timed out")
-                return f"Test script written to {output_path}\n\nERROR: Test execution timed out"
-            except Exception as e:
-                logger.error(f"Error during test execution: {e}")
-                return f"Test script written to {output_path}\n\nERROR: {str(e)}"
+            else:
+                return f"Test script written to {output_path}\n\n{output}"
 
         return write_test_script
 
@@ -160,13 +124,7 @@ async def generate_test_for_api(
         instance_id = str(uuid.uuid4())[:8]
 
     # Create workspace
-    workspace_dir = os.path.join(
-        tempfile.gettempdir(), f"playwright_test_{instance_id}"
-    )
-    os.makedirs(workspace_dir, exist_ok=True)
-
-    browser_data_dir = os.path.join(workspace_dir, "browser_data")
-    os.makedirs(browser_data_dir, exist_ok=True)
+    workspace_dir, browser_data_dir = create_workspace(instance_id)
 
     # Setup logger
     logger = setup_logger(instance_id, workspace_dir)
