@@ -13,7 +13,16 @@ from api_client_test_writer import generate_test_for_api
 from api_client_playwright_executor import execute_playwright_test
 from utils import cleanup_workspace as cleanup_workspace_util
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="E2E Test Generator API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # any origin
+    allow_methods=["*"],  # GET, POST, PUT, DELETE, etc.
+    allow_headers=["*"],  # any request headers
+    allow_credentials=False,  # must be False if allow_origins=["*"]
+)
 
 
 class TestGenerationRequest(BaseModel):

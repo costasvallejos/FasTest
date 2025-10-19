@@ -51,13 +51,15 @@ const HeaderTest = ({ onTestCreated }) => {
         .insert([
           {
             name: formData.name.trim(),
-            url: formData.url.trim(),
+            target_url: formData.url.trim(),
             description: formData.description.trim(),
-            status: 'Not Run',
-            platform: 'Web'
+            plan: response.test_plan,
+            test_script: response.test_script,
           }
         ])
         .select();
+      
+        console.log('Supabase Insert Response:', data, error);
 
       if (error) throw error;
 
