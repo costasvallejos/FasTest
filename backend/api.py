@@ -16,7 +16,11 @@ from api_client_playwright_executor import execute_playwright_test
 from utils import cleanup_workspace as cleanup_workspace_util
 
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+from fastapi import Query
+from confluence_import import get_page_by_id, parse_storage_html
 
+load_dotenv()  # Load env for all endpoints
 app = FastAPI(title="E2E Test Generator API")
 app.add_middleware(
     CORSMiddleware,
@@ -214,6 +218,24 @@ async def execute_test_endpoint(request: TestExecutionRequest):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Test execution failed: {str(e)}")
+
+
+@app.get("/confluence/import")
+async def confluence_import(page_id: str = Query(..., description="Confluence page id")):
+    """Import a Confluence page and extract basic test data."""
+    try:
+        page = await get_page_by_id(page_id)
+        title = page.get("title", "")
+        storage = page.get("body", {}).get("storage", {}).get("value", "")
+        parsed = parse_storage_html(storage)
+        return {
+            "name": title,
+            "url": parsed.get("url", ""),
+            "description": parsed.get("description", ""),
+            "plan": parsed.get("steps", []),
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Confluence import failed: {e}")
 
 
 if __name__ == "__main__":

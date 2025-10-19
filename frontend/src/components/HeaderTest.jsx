@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { FlaskConical, Plus, X } from 'lucide-react';
 import { supabase } from '../supabase';
-import { generateTest } from '../backendApi/generateTest';
+import { generateTest } from '../backendApi/generateTest.js';
 import logo from '../assets/logo3.png';
+import { importConfluencePage, extractPageIdFromUrl } from '../backendApi/confluenceImport';
 
 const HeaderTest = ({ onTestCreated, onRefresh }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -136,6 +137,28 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
           >
             <Plus className="h-4 w-4" />
             Create
+          </button>
+          <button
+            onClick={async () => {
+              const input = window.prompt('Paste Confluence page URL or ID');
+              if (!input) return;
+              const pageId = /\d+/.test(input) ? input : extractPageIdFromUrl(input);
+              if (!pageId) { alert('Could not extract page id'); return; }
+              try {
+                const data = await importConfluencePage(pageId);
+                setIsModalOpen(true);
+                setFormData({
+                  name: data.name || '',
+                  url: data.url || '',
+                  description: data.description || (Array.isArray(data.plan) ? data.plan.join('\n') : '')
+                });
+              } catch (e) {
+                alert('Import failed: ' + e.message);
+              }
+            }}
+            className="ml-2 inline-flex items-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-all duration-200"
+          >
+            Import from Confluence
           </button>
         </div>
       </div>
