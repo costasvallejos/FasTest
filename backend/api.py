@@ -61,6 +61,23 @@ class TestExecutionResponse(BaseModel):
     screenshot_id: Optional[str] = None
 
 
+class JiraIssueRequest(BaseModel):
+    """Request model for Jira issue creation."""
+
+    summary: str
+    description: str
+    issue_type: str = "Task"
+    project_key: Optional[str] = None
+
+
+class JiraIssueResponse(BaseModel):
+    """Response model for Jira issue creation."""
+
+    issue_key: str
+    issue_url: str
+    status: str
+
+
 @app.get("/")
 async def root():
     """Health check endpoint."""
@@ -214,6 +231,63 @@ async def execute_test_endpoint(request: TestExecutionRequest):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Test execution failed: {str(e)}")
+
+
+@app.post("/create-jira-issue", response_model=JiraIssueResponse)
+async def create_jira_issue_endpoint(request: JiraIssueRequest):
+    """
+    Create a Jira issue.
+
+    Args:
+        request: Jira issue creation request with summary, description, and issue type
+
+    Returns:
+        JiraIssueResponse with issue key, URL, and status
+    """
+    from dotenv import load_dotenv
+    from jira import JIRA
+
+    load_dotenv()
+
+    jira_host = os.getenv("JIRA_HOST")
+    jira_email = os.getenv("JIRA_EMAIL")
+    jira_api_token = os.getenv("JIRA_API_TOKEN")
+    project_key = request.project_key or os.getenv("JIRA_PROJECT_KEY")
+
+    if not all([jira_host, jira_email, jira_api_token, project_key]):
+        raise HTTPException(
+            status_code=500,
+            detail="Missing required environment variables: JIRA_HOST, JIRA_EMAIL, JIRA_API_TOKEN, JIRA_PROJECT_KEY",
+        )
+
+    try:
+        jira = JIRA(server=jira_host, basic_auth=(jira_email, jira_api_token))
+
+        issue_data = {
+            "project": {"key": project_key},
+            "summary": request.summary,
+            "description": request.description,
+            "issuetype": {"name": request.issue_type},
+        }
+
+        new_issue = jira.create_issue(fields=issue_data)
+
+        print(f"\n{'='*80}")
+        print("Jira issue created successfully")
+        print(f"Issue Key: {new_issue.key}")
+        print(f"Issue URL: {jira_host}/browse/{new_issue.key}")
+        print(f"{'='*80}\n")
+
+        return JiraIssueResponse(
+            issue_key=new_issue.key,
+            issue_url=f"{jira_host}/browse/{new_issue.key}",
+            status="success",
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to create Jira issue: {str(e)}"
+        )
 
 
 if __name__ == "__main__":
