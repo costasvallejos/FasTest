@@ -25,15 +25,12 @@ def add_step_logging_to_test_script(script: str) -> str:
 
 async def print_result_stream(stream: AsyncIterator[StreamEvent], logger):
     """Log events from the result stream.
-
     Args:
         stream: An async iterator yielding StreamEvent objects.
     """
-
     import tiktoken
 
     enc = tiktoken.encoding_for_model("gpt-4.1")
-
     # Stream events as they happen
     async for event in stream:
         # Ignore raw response deltas to avoid token-by-token noise
@@ -60,20 +57,16 @@ async def print_result_stream(stream: AsyncIterator[StreamEvent], logger):
                     # ", Params: ",
                     # tool_args,
                 )
-
             elif event.item.type == "tool_call_output_item":
                 output = event.item.raw_item.get("output")
                 logger.info(
-                    "[Tool Output] Received output from tool\t",
-                    "Tokens: ",
-                    len(enc.encode(output)),
+                    f"[Tool Output] Received output from tool\tTokens: {len(enc.encode(output))}"
                 )
                 # logger.info(
                 #     "Output: ",
                 #     output[:300] + ("..." if len(output) > 300 else ""),
                 #     "\n",
                 # )
-
             elif event.item.type == "message_output_item":
                 message = ItemHelpers.text_message_output(event.item)
                 if message and len(message) > 100:
