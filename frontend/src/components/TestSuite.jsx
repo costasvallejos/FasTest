@@ -80,28 +80,28 @@ export default function TestSuite() {
         fetchTests();
     }, []);
 
-    // Refresh tests when the component becomes visible (user returns from TestCreate)
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (!document.hidden) {
-                console.log('Page became visible, refreshing tests...');
-                refreshTests();
-            }
-        };
+    // // Refresh tests when the component becomes visible (user returns from TestCreate)
+    // useEffect(() => {
+    //     const handleVisibilityChange = () => {
+    //         if (!document.hidden) {
+    //             console.log('Page became visible, refreshing tests...');
+    //             refreshTests();
+    //         }
+    //     };
 
-        const handleFocus = () => {
-            console.log('Window focused, refreshing tests...');
-            refreshTests();
-        };
+    //     const handleFocus = () => {
+    //         console.log('Window focused, refreshing tests...');
+    //         refreshTests();
+    //     };
 
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        window.addEventListener('focus', handleFocus);
+    //     document.addEventListener('visibilitychange', handleVisibilityChange);
+    //     window.addEventListener('focus', handleFocus);
 
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-            window.removeEventListener('focus', handleFocus);
-        };
-    }, []);
+    //     return () => {
+    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
+    //         window.removeEventListener('focus', handleFocus);
+    //     };
+    // }, []);
 
     if (loading) {
         return (
