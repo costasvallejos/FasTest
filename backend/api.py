@@ -67,7 +67,6 @@ class JiraIssueRequest(BaseModel):
     summary: str
     description: str
     issue_type: str = "Task"
-    project_key: Optional[str] = None
 
 
 class JiraIssueResponse(BaseModel):
@@ -114,7 +113,9 @@ async def generate_test_endpoint(request: TestGenerationRequest):
     instance_id = request.instance_id or str(uuid.uuid4())[:8]
 
     # Determine log path
-    workspace_dir = os.path.join(tempfile.gettempdir(), f"playwright_test_{instance_id}")
+    workspace_dir = os.path.join(
+        tempfile.gettempdir(), f"playwright_test_{instance_id}"
+    )
     log_path = os.path.join(workspace_dir, "logs", "request.log")
 
     # Log request start to main console
@@ -252,7 +253,7 @@ async def create_jira_issue_endpoint(request: JiraIssueRequest):
     jira_host = os.getenv("JIRA_HOST")
     jira_email = os.getenv("JIRA_EMAIL")
     jira_api_token = os.getenv("JIRA_API_TOKEN")
-    project_key = request.project_key or os.getenv("JIRA_PROJECT_KEY")
+    project_key = os.getenv("JIRA_PROJECT_KEY")
 
     if not all([jira_host, jira_email, jira_api_token, project_key]):
         raise HTTPException(
