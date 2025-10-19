@@ -11,19 +11,19 @@ export const generateTest = async (requestData) => {
   TestGenerationRequestSchema.parse(requestData)
 
   // !!! USING DUMMY DATA
-  // const responseData = getDummyTestGenerationResponse()
+  const responseData = getDummyTestGenerationResponse()
 
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 20000))
 
-  const response = await fetch(`${API_BASE_URL}/generate-test`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestData),
-  })
-  const responseData = await response.json()
+  // const response = await fetch(`${API_BASE_URL}/generate-test`, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(requestData),
+  // })
+  // const responseData = await response.json()
 
   TestGenerationResponseSchema.parse(responseData)
 

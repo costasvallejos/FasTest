@@ -12,21 +12,9 @@ successful_step_definition = r"""
 import * as fs from "fs";
 import * as path from "path";
 
-test.afterEach(async ({ page }, testInfo) => {
+test.afterEach(async () => {
     const outputPath = path.join(process.cwd(), 'completed_steps.json');
     fs.writeFileSync(outputPath, JSON.stringify(completed_steps, null, 2));
-
-    // Capture screenshot on test failure
-    if (testInfo.status !== 'passed') {
-        try {
-            const screenshotPath = path.join(process.cwd(), 'failure_screenshot.png');
-            await page.screenshot({ path: screenshotPath, fullPage: true });
-            const screenshotInfoPath = path.join(process.cwd(), 'failure_screenshot.json');
-            fs.writeFileSync(screenshotInfoPath, JSON.stringify({ path: screenshotPath }, null, 2));
-        } catch (error) {
-            console.error('Failed to capture screenshot:', error);
-        }
-    }
 });
 
 """
@@ -220,41 +208,6 @@ def run_tests(testjs_dir: str, logger: logging.Logger = None) -> tuple[bool, str
         if logger:
             logger.error(error_msg)
         return False, f"ERROR: {str(e)}"
-
-
-def upload_screenshot_to_supabase(screenshot_path: str) -> str:
-    """
-    Upload a screenshot to Supabase storage bucket.
-
-    Args:
-        screenshot_path: Local path to the screenshot file
-
-    Returns:
-        The unique ID (UUID) of the uploaded screenshot
-
-    Raises:
-        Exception if upload fails
-    """
-    import uuid
-    from supabase_client import get_supabase_client
-
-    # Generate unique ID for the screenshot
-    screenshot_id = str(uuid.uuid4())
-    filename = f"{screenshot_id}.png"
-
-    # Read screenshot file
-    with open(screenshot_path, "rb") as f:
-        screenshot_bytes = f.read()
-
-    # Upload to Supabase
-    supabase = get_supabase_client()
-    supabase.storage.from_("Screenshots").upload(
-        path=filename,
-        file=screenshot_bytes,
-        file_options={"content-type": "image/png"}
-    )
-
-    return screenshot_id
 
 
 def cleanup_workspace(instance_id: str, keep_tests: bool = False) -> bool:

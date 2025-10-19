@@ -158,34 +158,6 @@ def execute_playwright_test(test_id: str) -> dict:
         else:
             logger.info("Test passed successfully")
 
-        # Handle screenshot upload if test failed
-        screenshot_id = None
-        if not success:
-            screenshot_info_path = os.path.join(testjs_dir, "failure_screenshot.json")
-            if os.path.exists(screenshot_info_path):
-                logger.info(f"Screenshot info file found at {screenshot_info_path}")
-                try:
-                    with open(screenshot_info_path, "r") as f:
-                        screenshot_info = json.load(f)
-                    screenshot_path = screenshot_info.get("path")
-
-                    if screenshot_path and os.path.exists(screenshot_path):
-                        logger.info(f"Uploading screenshot from {screenshot_path} to Supabase")
-                        from utils import upload_screenshot_to_supabase
-                        screenshot_id = upload_screenshot_to_supabase(screenshot_path)
-                        logger.info(f"Screenshot uploaded successfully with ID: {screenshot_id}")
-
-                        # Clean up local screenshot files
-                        os.remove(screenshot_path)
-                        os.remove(screenshot_info_path)
-                        logger.info("Local screenshot files cleaned up")
-                    else:
-                        logger.warning(f"Screenshot path not found or invalid: {screenshot_path}")
-                except Exception as e:
-                    logger.error(f"Failed to upload screenshot: {e}", exc_info=True)
-            else:
-                logger.info("No screenshot info file found (test may have failed before screenshot could be captured)")
-
         # Cleanup logger handlers
         for handler in logger.handlers[:]:
             handler.close()
@@ -204,7 +176,6 @@ def execute_playwright_test(test_id: str) -> dict:
             "progress_percentage": progress_percentage,
             "failing_step": failing_step,
             "failing_step_index": failing_step_index,
-            "screenshot_id": screenshot_id,
             "workspace_dir": workspace_dir,
             "log_path": log_path,
             "execution_id": execution_id,
