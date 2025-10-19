@@ -6,19 +6,17 @@ load_dotenv()
 
 
 def create_jira_issue():
-    jira_url = os.getenv("JIRA_URL")
-    jira_pat = os.getenv("JIRA_PAT")
+    jira_host = os.getenv("JIRA_HOST")
+    jira_email = os.getenv("JIRA_EMAIL")
+    jira_api_token = os.getenv("JIRA_API_TOKEN")
     project_key = os.getenv("JIRA_PROJECT_KEY")
 
-    if not all([jira_url, jira_pat, project_key]):
+    if not all([jira_host, jira_email, jira_api_token, project_key]):
         raise ValueError(
-            "Missing required environment variables: JIRA_URL, JIRA_PAT, JIRA_PROJECT_KEY"
+            "Missing required environment variables: JIRA_HOST, JIRA_EMAIL, JIRA_API_TOKEN, JIRA_PROJECT_KEY"
         )
 
-    headers = JIRA.DEFAULT_OPTIONS["headers"].copy()
-    headers["Authorization"] = f"Bearer {jira_pat}"
-
-    jira = JIRA(server=jira_url, options={"headers": headers})
+    jira = JIRA(server=jira_host, basic_auth=(jira_email, jira_api_token))
 
     issue_data = {
         "project": {"key": project_key},
@@ -31,7 +29,7 @@ def create_jira_issue():
         new_issue = jira.create_issue(fields=issue_data)
         print(f"Issue created successfully!")
         print(f"Issue Key: {new_issue.key}")
-        print(f"Issue URL: {jira_url}/browse/{new_issue.key}")
+        print(f"Issue URL: {jira_host}/browse/{new_issue.key}")
         return new_issue
     except Exception as e:
         print(f"Failed to create issue: {str(e)}")
