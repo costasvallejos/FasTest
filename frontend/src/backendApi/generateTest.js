@@ -1,4 +1,7 @@
-import {TestGenerationResponseSchema,  TestGenerationRequestSchema } from "../schemas/generateTestSchema.js"
+import {
+  TestGenerationResponseSchema,
+  TestGenerationRequestSchema,
+} from "../schemas/generateTestSchema.js"
 import { API_BASE_URL } from "../constants.js"
 import { getDummyTestGenerationResponse } from "../test_data/dummyData.js"
 
@@ -7,6 +10,10 @@ export const generateTest = async (requestData) => {
 
   // !!! USING DUMMY DATA
   const responseData = getDummyTestGenerationResponse()
+
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 20000))
+
   // const response = await fetch(`${API_BASE_URL}/generate-test`, {
   //   method: "POST",
   //   headers: {
