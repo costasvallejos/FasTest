@@ -12,7 +12,7 @@ import shutil
 import logging
 import sys
 from prompts.system_prompt_string import SYSTEM_PROMPT
-from utils import add_step_logging_to_test_script
+from utils import add_step_logging_to_test_script, print_result_stream
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -215,6 +215,8 @@ async def generate_test_for_api(
             input=f"Generate an E2E test for the following test case: {test_case_description}",
         )
 
+        await print_result_stream(result.stream_events(), logger)
+
         # Consume stream
         async for event in result.stream_events():
             pass  # Just consume events, tools already capture data
@@ -235,5 +237,3 @@ async def generate_test_for_api(
         "test_plan": captured_data.get("test_plan"),
         "test_script": captured_data.get("test_script"),
     }
-
-
