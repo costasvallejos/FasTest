@@ -46,7 +46,7 @@ function TestResultsPanel({
       {testResult && !testResult.passed && showResult && (
         <>
           <div
-            className="bg-red-50 rounded-lg border border-red-300 p-4 transition-all duration-700 ease-out h-[500px] flex flex-col"
+            className="bg-red-50 rounded-lg border border-red-300 p-4 transition-all duration-700 ease-out flex flex-col"
             style={{
               opacity: 0,
               transform: 'translateY(-10px)',
@@ -60,9 +60,8 @@ function TestResultsPanel({
             <img
               src={testResult.screenshot}
               alt="Failure screenshot"
-              className="w-full rounded border border-gray-300 mb-3 flex-1 object-cover"
+              className="w-full rounded border border-gray-300 mb-3 flex-1 object-contain"
             />
-            <p className="text-sm text-gray-600 mb-4">{testResult.errorMessage}</p>
           </div>
 
           <div
