@@ -234,10 +234,8 @@ function TestCreate() {
     setShowJiraModal(false);
   };
 
-  const handleJiraModalConfirm = (issueData) => {
-    console.log('Creating Jira issue:', issueData);
-    // TODO: Implement actual Jira API call
-    setShowJiraModal(false);
+  const handleJiraModalConfirm = (response) => {
+    console.log('Jira issue created:', response);
   };
 
 
@@ -281,6 +279,8 @@ function TestCreate() {
         onConfirm={handleJiraModalConfirm}
         testName={name}
         testDescription={description}
+        testUrl={url}
+        testSteps={steps}
       />
       {showJiraModal && console.log('Modal props:', { showJiraModal, name, description })}
 
