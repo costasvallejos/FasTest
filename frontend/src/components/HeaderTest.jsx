@@ -142,7 +142,7 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4" style={{boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)'}}>
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
