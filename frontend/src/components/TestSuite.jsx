@@ -38,6 +38,25 @@ export default function TestSuite() {
         });
     };
 
+    const refreshTests = async () => {
+        try {
+            console.log('Refreshing tests from Supabase...');
+            const { data, error } = await supabase.from('tests').select('*');
+            console.log('Supabase refresh response:', { data, error });
+            
+            if (error) {
+                console.error('Supabase refresh error:', error);
+                setError(error);
+            } else {
+                console.log('Tests refreshed:', data);
+                setTests(data || []);
+            }
+        } catch (err) {
+            console.error('Refresh error:', err);
+            setError(err);
+        }
+    };
+
     useEffect(() => {
         const fetchTests = async () => {
             try {
@@ -59,6 +78,29 @@ export default function TestSuite() {
             setLoading(false);
         }
         fetchTests();
+    }, []);
+
+    // Refresh tests when the component becomes visible (user returns from TestCreate)
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                console.log('Page became visible, refreshing tests...');
+                refreshTests();
+            }
+        };
+
+        const handleFocus = () => {
+            console.log('Window focused, refreshing tests...');
+            refreshTests();
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('focus', handleFocus);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleFocus);
+        };
     }, []);
 
     if (loading) {
@@ -85,7 +127,7 @@ export default function TestSuite() {
     }
     return (
         <div className="min-h-screen bg-gray-50 p-8" style={{ scrollBehavior: 'smooth' }}>
-            <HeaderTest onTestCreated={handleTestCreated}/>
+            <HeaderTest onTestCreated={handleTestCreated} onRefresh={refreshTests}/>
 
             {tests.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mt-6 text-center">

@@ -3,7 +3,7 @@ import { FlaskConical, Plus, X } from 'lucide-react';
 import { supabase } from '../supabase';
 import { generateTest } from '../backendApi/generateTest';
 
-const HeaderTest = ({ onTestCreated }) => {
+const HeaderTest = ({ onTestCreated, onRefresh }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -93,6 +93,11 @@ const HeaderTest = ({ onTestCreated }) => {
           status: 'Not Run',
           animateIn: true // Flag to trigger slide-in animation
         });
+      }
+      
+      // Refresh the tests list to get updated data
+      if (onRefresh) {
+        onRefresh();
       }
     } catch (error) {
       console.error('Error creating test:', error);
