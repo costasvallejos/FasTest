@@ -136,6 +136,42 @@ def execute_playwright_test(test_id: str) -> dict:
         else:
             logger.warning(f"completed_steps.json not found at {completed_steps_path}")
 
+        # Handle screenshot on failure
+        screenshot_id = None
+        screenshot_id_path = os.path.join(testjs_dir, "screenshot_id.json")
+        if os.path.exists(screenshot_id_path):
+            logger.info(f"Screenshot ID file found at {screenshot_id_path}")
+            try:
+                with open(screenshot_id_path, "r") as f:
+                    screenshot_data = json.load(f)
+                    screenshot_id = screenshot_data.get("screenshot_id")
+
+                if screenshot_id:
+                    screenshot_file_path = os.path.join(testjs_dir, f"{screenshot_id}.png")
+                    if os.path.exists(screenshot_file_path):
+                        logger.info(f"Uploading screenshot {screenshot_id} to Supabase")
+
+                        with open(screenshot_file_path, "rb") as screenshot_file:
+                            screenshot_bytes = screenshot_file.read()
+
+                        upload_result = supabase.storage.from_("Screenshots").upload(
+                            path=f"{screenshot_id}.png",
+                            file=screenshot_bytes,
+                            file_options={"content-type": "image/png"}
+                        )
+
+                        logger.info(f"Screenshot uploaded successfully: {screenshot_id}")
+
+                        # Clean up local screenshot file
+                        os.remove(screenshot_file_path)
+                        logger.info(f"Removed local screenshot file")
+                    else:
+                        logger.warning(f"Screenshot file not found at {screenshot_file_path}")
+                        screenshot_id = None
+            except Exception as e:
+                logger.warning(f"Failed to upload screenshot: {e}")
+                screenshot_id = None
+
         # Calculate progress
         steps_completed = len(completed_steps)
         total_steps = len(test_plan) if test_plan else 0
@@ -193,6 +229,7 @@ def execute_playwright_test(test_id: str) -> dict:
             "workspace_dir": workspace_dir,
             "log_path": log_path,
             "execution_id": execution_id,
+            "screenshot_id": screenshot_id,
         }
 
     except Exception as e:

@@ -27,12 +27,34 @@ test.afterEach(async () => {
 });
 """
 
+screenshot_on_failure = r"""
+test.afterAll(async ({ page }, testInfo) => {
+    if (testInfo.status !== testInfo.expectedStatus) {
+        try {
+            const crypto = await import('crypto');
+            const screenshotId = crypto.randomUUID();
+            const screenshotPath = path.join(process.cwd(), `${screenshotId}.png`);
+
+            await page.screenshot({
+                path: screenshotPath,
+                fullPage: false
+            });
+
+            const idOutputPath = path.join(process.cwd(), 'screenshot_id.json');
+            fs.writeFileSync(idOutputPath, JSON.stringify({ screenshot_id: screenshotId }, null, 2));
+        } catch (error) {
+            console.error('Failed to capture screenshot:', error);
+        }
+    }
+});
+"""
+
 
 def add_post_test_file_write(script: str) -> str:
     """
-    Adds the afterEach function to the end of the test script
+    Adds the afterEach and afterAll hooks to the end of the test script
     """
-    return script + post_test_file_write
+    return script + post_test_file_write + screenshot_on_failure
 
 
 def add_step_logging_to_test_script(script: str) -> str:
