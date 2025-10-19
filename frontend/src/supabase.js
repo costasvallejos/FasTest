@@ -11,4 +11,17 @@ if (!supabaseUrl || !supabaseKey) {
 
 export const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseKey || 'placeholder-key');
 
+export async function fetchTestById(testId) {
+  const { data, error } = await supabase
+    .from('tests')
+    .select('*')
+    .eq('id', testId)
+    .single();
 
+  if (error) {
+    console.error('Error fetching test:', error);
+    throw error;
+  }
+
+  return data;
+}
