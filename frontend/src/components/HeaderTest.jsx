@@ -36,19 +36,36 @@ const HeaderTest = ({ onTestCreated }) => {
       return;
     }
 
+    // Create a temporary loading test object
+    const loadingTest = {
+      id: `loading-${Date.now()}`, // Temporary ID
+      name: formData.name.trim(),
+      target_url: formData.url.trim(),
+      description: formData.description.trim(),
+      status: 'Loading...',
+      platform: 'Web',
+      lastRun: null,
+      isLoading: true
+    };
+
+    // Immediately close modal and add loading test to the list
+    handleCloseModal();
+    if (onTestCreated) {
+      onTestCreated(loadingTest);
+    }
+
     setIsSubmitting(true);
     try {
       console.log('Sending generateTest request', {
         target_url: formData.url.trim(),
         test_case_description: formData.description.trim(),
       });
-      // USE THIS RESPONSE AND FILL IN THE DB WITH OUR ACTUAL DATA
+      
       const response = await generateTest({
         target_url: formData.url.trim(),
         test_case_description: formData.description.trim(),
       });
       console.log('Generated Test Response:', response);
-
 
       const { data, error } = await supabase
         .from('tests')
@@ -63,18 +80,30 @@ const HeaderTest = ({ onTestCreated }) => {
         ])
         .select();
       
-        console.log('Supabase Insert Response:', data, error);
+      console.log('Supabase Insert Response:', data, error);
 
       if (error) throw error;
 
-      // Call the parent's callback to refresh the test list
+      // Update the loading test with real data
       if (onTestCreated) {
-        onTestCreated(data[0]);
+        onTestCreated({
+          ...data[0],
+          isLoading: false,
+          status: 'Not Run',
+          animateIn: true // Flag to trigger slide-in animation
+        });
       }
-
-      handleCloseModal();
     } catch (error) {
       console.error('Error creating test:', error);
+      // Update the loading test to show error state
+      if (onTestCreated) {
+        onTestCreated({
+          ...loadingTest,
+          isLoading: false,
+          status: 'Error',
+          error: 'Failed to create test'
+        });
+      }
       alert('Failed to create test. Please try again.');
     } finally {
       setIsSubmitting(false);

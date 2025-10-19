@@ -30,8 +30,20 @@ const formatLastRun = (value) => {
   return String(value);
 };
 
-const statusChip = (status) => {
+const statusChip = (status, isLoading = false) => {
   const base = "inline-flex items-center gap-2 px-2.5 py-1.5 rounded-full text-sm md:text-base font-semibold border";
+  
+  if (isLoading || status === "Loading...") return (
+    <span className={classNames(base, "bg-blue-50 text-blue-700 border-blue-200")}>
+      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+      Loading...
+    </span>
+  );
+  
+  if (status === "Error") return (
+    <span className={classNames(base, "bg-red-50 text-red-700 border-red-200")}> <Dot color="#dc2626"/> Error </span>
+  );
+  
   if (status === "Passing") return (
     <span className={classNames(base, "bg-green-50 text-green-700 border-green-200")}> <Dot color="#16a34a"/> Passing </span>
   );
@@ -258,23 +270,59 @@ export default function TestSuiteDashboard() {
                 )}
 
                 {!loading && rows.map((t) => (
-                  <tr key={t.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap font-semibold text-gray-900 text-lg md:text-xl max-w-[480px] truncate" title={t.name}>{t.name}</td>
-                    {/* Platform cell removed */}
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-700 text-base md:text-lg max-w-[560px] truncate" title={t.executionTarget || t.testUrl}>
-                      {t.executionTarget || t.testUrl || "—"}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">{statusChip(t.status)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-700 text-base md:text-lg">{formatLastRun(t.lastRun)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="flex items-center gap-1.5 text-gray-500">
-                        <IconButton title="Edit" onClick={() => alert(`Edit ${t.name}`)}><Wrench/></IconButton>
-                        <IconButton title="Run" onClick={() => alert(`Run ${t.name}`)}><Play/></IconButton>
-                        <IconButton title="Settings" onClick={() => alert(`Settings for ${t.name}`)}><Gear/></IconButton>
-                        <IconButton title="More" onClick={() => alert(`More for ${t.name}`)}><Dots/></IconButton>
-                      </div>
-                    </td>
-                  </tr>
+                  t.isLoading ? (
+                    // Breathing loading row with actual data
+                    <tr key={t.id}>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="font-semibold text-gray-900 text-lg md:text-xl max-w-[480px] truncate animate-breathing">
+                          {t.name || 'Test Name'}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="text-gray-700 text-base md:text-lg max-w-[560px] truncate animate-breathing">
+                          {t.target_url || t.executionTarget || 'https://example.com'}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5 border bg-blue-100 border-blue-300 w-fit">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span className="text-xs font-medium text-blue-600">Loading...</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="text-gray-700 text-base md:text-lg animate-breathing">
+                          N/A
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5 text-gray-500">
+                          <div className="h-6 w-6 bg-gray-200 rounded animate-breathing"></div>
+                          <div className="h-6 w-6 bg-gray-200 rounded animate-breathing"></div>
+                          <div className="h-6 w-6 bg-gray-200 rounded animate-breathing"></div>
+                          <div className="h-6 w-6 bg-gray-200 rounded animate-breathing"></div>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    // Regular row for loaded data
+                    <tr key={t.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 whitespace-nowrap font-semibold text-gray-900 text-lg md:text-xl max-w-[480px] truncate" title={t.name}>{t.name}</td>
+                      {/* Platform cell removed */}
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-700 text-base md:text-lg max-w-[560px] truncate" title={t.executionTarget || t.testUrl}>
+                        {t.executionTarget || t.testUrl || "—"}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">{statusChip(t.status, t.isLoading)}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-700 text-base md:text-lg">{formatLastRun(t.lastRun)}</td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5 text-gray-500">
+                          <IconButton title="Edit" onClick={() => alert(`Edit ${t.name}`)}><Wrench/></IconButton>
+                          <IconButton title="Run" onClick={() => alert(`Run ${t.name}`)}><Play/></IconButton>
+                          <IconButton title="Settings" onClick={() => alert(`Settings for ${t.name}`)}><Gear/></IconButton>
+                          <IconButton title="More" onClick={() => alert(`More for ${t.name}`)}><Dots/></IconButton>
+                        </div>
+                      </td>
+                    </tr>
+                  )
                 ))}
               </tbody>
             </table>

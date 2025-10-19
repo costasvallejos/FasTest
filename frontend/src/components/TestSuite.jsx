@@ -17,7 +17,25 @@ export default function TestSuite() {
     };
 
     const handleTestCreated = (newTest) => {
-        setTests(prevTests => [...prevTests, newTest]);
+        setTests(prevTests => {
+            // If this is updating an existing loading test, replace it
+            if (newTest.id && newTest.id.startsWith('loading-')) {
+                // This is a loading test, just add it
+                return [...prevTests, newTest];
+            } else if (newTest.isLoading === false && newTest.id && !newTest.id.startsWith('loading-')) {
+                // This is a real test replacing a loading one, find and replace
+                const updatedTests = prevTests.map(test => {
+                    if (test.id && test.id.startsWith('loading-') && test.name === newTest.name) {
+                        return newTest;
+                    }
+                    return test;
+                });
+                return updatedTests;
+            } else {
+                // Regular new test
+                return [...prevTests, newTest];
+            }
+        });
     };
 
     useEffect(() => {
