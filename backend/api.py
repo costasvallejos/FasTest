@@ -169,6 +169,15 @@ async def execute_test_endpoint(request: TestExecutionRequest):
     Returns:
         TestExecutionResponse with success status, output, and test plan
     """
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
+    if not os.getenv("SUPABASE_URL") or not os.getenv("SUPABASE_KEY"):
+        raise HTTPException(
+            status_code=500, detail="SUPABASE_URL and SUPABASE_KEY not configured on server"
+        )
+
     print(f"\n{'='*80}")
     print("Test execution request started")
     print(f"Test ID: {request.test_id}")
