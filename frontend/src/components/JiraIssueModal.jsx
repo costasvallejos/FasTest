@@ -157,9 +157,9 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
             onClick={handleCancel}
             disabled={isLoading}
             className="flex-1 px-4 py-3 font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-2"
-            style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: 'transparent' }}
-            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = '#fef2f2')}
-            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = 'transparent')}
+            style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.1)' }}
+            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(220, 38, 38, 0.15)')}
+            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(220, 38, 38, 0.1)')}
           >
             No
           </button>
@@ -167,10 +167,10 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
             type="button"
             onClick={handleConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 text-white font-medium rounded-md transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#16a34a' }}
-            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = '#15803d')}
-            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = '#16a34a')}
+            className="flex-1 px-4 py-3 font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-2"
+            style={{ borderColor: '#16a34a', color: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)' }}
+            onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(22, 163, 74, 0.15)')}
+            onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = 'rgba(22, 163, 74, 0.1)')}
           >
             {isLoading ? 'Creating...' : 'Yes'}
           </button>
