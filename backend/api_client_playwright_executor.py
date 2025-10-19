@@ -1,12 +1,14 @@
 import os
 import logging
 import uuid
+import json
 
 from utils import (
     create_workspace,
     setup_testjs_workspace,
     install_test_dependencies,
     run_tests,
+    add_step_logging_to_test_script,
 )
 
 
@@ -91,11 +93,15 @@ def execute_playwright_test(test_id: str) -> dict:
         logger.info("Setting up testjs workspace")
         testjs_dir = setup_testjs_workspace(workspace_dir, logger)
 
+        # Add step logging to test script
+        logger.info("Adding step logging to test script")
+        test_script_with_logging = add_step_logging_to_test_script(test_script)
+
         # Write test script to file
         test_file_path = os.path.join(testjs_dir, "tests", "test.spec.js")
         logger.info(f"Writing test script to {test_file_path}")
         with open(test_file_path, "w") as f:
-            f.write(test_script)
+            f.write(test_script_with_logging)
         logger.info(f"Test script written successfully")
 
         # Install dependencies
@@ -112,6 +118,27 @@ def execute_playwright_test(test_id: str) -> dict:
         logger.info(f"Test execution completed. Success: {success}")
         logger.info(f"Test output:\n{output}")
 
+        # Read completed steps from JSON file
+        completed_steps = []
+        completed_steps_path = os.path.join(testjs_dir, "completed_steps.json")
+        if os.path.exists(completed_steps_path):
+            logger.info(f"Reading completed steps from {completed_steps_path}")
+            try:
+                with open(completed_steps_path, "r") as f:
+                    completed_steps = json.load(f)
+                logger.info(f"Successfully read {len(completed_steps)} completed steps")
+            except Exception as e:
+                logger.warning(f"Failed to read completed_steps.json: {e}")
+        else:
+            logger.warning(f"completed_steps.json not found at {completed_steps_path}")
+
+        # Calculate progress
+        steps_completed = len(completed_steps)
+        total_steps = len(test_plan) if test_plan else 0
+        progress_percentage = (steps_completed / total_steps * 100) if total_steps > 0 else 0
+
+        logger.info(f"Test progress: {steps_completed}/{total_steps} steps ({progress_percentage:.1f}%)")
+
         # Cleanup logger handlers
         for handler in logger.handlers[:]:
             handler.close()
@@ -124,6 +151,10 @@ def execute_playwright_test(test_id: str) -> dict:
             "output": output,
             "test_id": test_id,
             "test_plan": test_plan,
+            "completed_steps": completed_steps,
+            "steps_completed": steps_completed,
+            "total_steps": total_steps,
+            "progress_percentage": progress_percentage,
             "workspace_dir": workspace_dir,
             "log_path": log_path,
             "execution_id": execution_id,
