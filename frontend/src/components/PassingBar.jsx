@@ -8,9 +8,9 @@ export default function PassingBar({ tests }) {
     let notRun = 0;
 
     for (const test of tests) {
-        if (test.status === 'Passing') {
+        if (test.last_passed === true) {
             passing++;
-        } else if (test.status === 'Failing') {
+        } else if (test.last_passed === false) {
             failing++;
         } else {
             notRun++;
