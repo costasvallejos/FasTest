@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { CheckCircle2, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import StepBlock from '../components/StepBlock';
+import TestHeader from '../components/TestHeader';
+import TestConfigurationPanel from '../components/TestConfigurationPanel';
+import TestStepsPanel from '../components/TestStepsPanel';
+import TestResultsPanel from '../components/TestResultsPanel';
 
 function TestCreate() {
   const navigate = useNavigate();
@@ -43,15 +45,6 @@ function TestCreate() {
       }
     }
   }, [testData, isEditMode]);
-
-  // Mock data for demonstration
-  const mockSteps = [
-    { id: 1, type: 'navigate', text: 'Navigate to /login page' },
-    { id: 2, type: 'input', text: 'Enter "user@email.com" in email field' },
-    { id: 3, type: 'input', text: 'Enter "password123" in password field' },
-    { id: 4, type: 'click', text: 'Click "Login" button' },
-    { id: 5, type: 'verify', text: 'Verify user is redirected to dashboard' }
-  ];
 
   const handleGenerate = () => {
     setIsGenerating(true);
@@ -183,292 +176,40 @@ function TestCreate() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-50" style={{ scrollBehavior: 'smooth' }}>
-      {/* Header with Back Button */}
-      <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 rounded-lg transition-all duration-200 shadow-sm"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Test Suite
-        </button>
-        <div className="flex items-center gap-4">
-          <div className="text-gray-600 text-sm">
-            {isEditMode ? 'Edit Test Configuration' : 'Test Creation'}
-          </div>
-          {isEditMode && (
-            <button
-              onClick={handleSaveTest}
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-medium hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg"
-            >
-              Save Changes
-            </button>
-          )}
-        </div>
-      </div>
+      <TestHeader
+        onBack={() => navigate('/')}
+        isEditMode={isEditMode}
+        onSave={handleSaveTest}
+      />
 
-      {/* Main Content */}
       <div className="flex-1 flex">
-        {/* Test Configuration Panel (33.33%) */}
-        <div className="w-1/3 p-6 border-r border-gray-200 bg-white">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Test Configuration</h2>
-          
-          <div className="space-y-4">
-            <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Test Name
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter test name"
-                className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
-              />
-            </div>
+        <TestConfigurationPanel
+          name={name}
+          setName={setName}
+          description={description}
+          setDescription={setDescription}
+          url={url}
+          setUrl={setUrl}
+          isGenerating={isGenerating}
+          onGenerate={handleGenerate}
+        />
 
-            <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Test Description
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g., Check that a user can reset their password"
-                className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
-                rows={3}
-              />
-            </div>
+        <TestStepsPanel
+          steps={steps}
+          stepStatuses={stepStatuses}
+          showRunButton={showRunButton}
+          isRunning={isRunning}
+          onEditStep={handleEditStep}
+          onDeleteStep={handleDeleteStep}
+          onRunTest={handleRunTest}
+        />
 
-            <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Page URL
-              </label>
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com/login"
-                className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
-              />
-            </div>
-
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating || !description.trim()}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
-            >
-              {isGenerating ? 'Generating...' : 'Generate Test Steps'}
-            </button>
-          </div>
-        </div>
-
-        {/* Test Steps Panel (33.33%) */}
-        <div className="w-1/3 p-6 border-r border-gray-200 bg-white overflow-y-auto">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Test Steps</h2>
-              
-          {steps.length === 0 ? (
-            <div className="space-y-3">
-              {/* Empty placeholder step blocks - enough to fill the height */}
-              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-600">1</span>
-                  </div>
-                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
-                  <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-600">2</span>
-                  </div>
-                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
-                  <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-600">3</span>
-                  </div>
-                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
-                  <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-600">4</span>
-                  </div>
-                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
-                  <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-sm opacity-50">
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-gray-600">5</span>
-                  </div>
-                  <p className="flex-1 text-gray-600 font-medium">Step will appear here...</p>
-                  <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-center mt-6">
-                <div className="text-4xl mb-2">🤖</div>
-                <p className="text-gray-500 text-sm">Generate test steps to see them here</p>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {steps.map((step) => (
-                <StepBlock
-                  key={step.id}
-                  step={step}
-                  status={stepStatuses[step.id] || 'pending'}
-                  onEdit={handleEditStep}
-                  onDelete={handleDeleteStep}
-                />
-              ))}
-              
-              {showRunButton && (
-                <div 
-                  style={{
-                    opacity: 0,
-                    transform: 'translateY(-10px)',
-                    animation: 'fadeInUp 0.6s ease-out forwards'
-                  }}
-                >
-                  <button
-                    onClick={handleRunTest}
-                    disabled={isRunning || steps.length === 0}
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg mt-4 transition-all duration-300 shadow-lg"
-                  >
-                    {isRunning ? 'Running Test...' : 'Run Test'}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Test Results Panel (33.33%) */}
-        <div className="w-1/3 p-6 bg-white overflow-y-auto">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Test Result</h2>
-              
-          {!testResult && !isRunning && (
-            <div className="bg-gray-100 border border-gray-300 rounded-lg p-8 shadow-sm opacity-50 flex flex-col items-center justify-center h-[500px]">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">📸</span>
-                </div>
-                <p className="text-gray-600 font-medium text-lg">Screenshot will appear here</p>
-              </div>
-              <p className="text-gray-500 text-sm text-center">Test results and screenshots will show in this area</p>
-            </div>
-          )}
-          
-          {isRunning && (
-            <div 
-              className="bg-gray-50 rounded-lg p-8 text-center border border-gray-200 transition-all duration-500 ease-in-out opacity-100 h-[500px] flex flex-col items-center justify-center"
-              style={{
-                opacity: 0,
-                transform: 'translateY(-10px)',
-                animation: 'fadeInUp 0.6s ease-out forwards'
-              }}
-            >
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex space-x-2">
-                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
-                </div>
-                <p className="text-gray-600 text-lg font-medium">Running test...</p>
-                <p className="text-gray-500 text-sm">Executing Playwright tests</p>
-              </div>
-            </div>
-          )}
-          
-          {testResult && !testResult.passed && showResult && (
-            <>
-              <div 
-                className="bg-red-50 rounded-lg border border-red-300 p-4 transition-all duration-700 ease-out h-[500px] flex flex-col"
-                style={{
-                  opacity: 0,
-                  transform: 'translateY(-10px)',
-                  animation: 'fadeInUp 0.6s ease-out forwards'
-                }}
-              >
-                <div className="flex items-center gap-2 mb-3 text-red-600">
-                  <span className="text-2xl">❌</span>
-                  <span className="font-semibold">Test Failed at Step {testResult.failedStep}</span>
-                </div>
-                <img 
-                  src={testResult.screenshot} 
-                  alt="Failure screenshot"
-                  className="w-full rounded border border-gray-300 mb-3 flex-1 object-cover"
-                />
-                <p className="text-sm text-gray-600 mb-4">{testResult.errorMessage}</p>
-              </div>
-              
-              <div 
-                className="mt-4"
-                style={{
-                  opacity: 0,
-                  transform: 'translateY(-10px)',
-                  animation: 'fadeInUp 0.6s ease-out forwards',
-                  animationDelay: '0.2s'
-                }}
-              >
-                <button
-                  onClick={handleReportToJira}
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-2 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg"
-                >
-                  🎫 Report to Jira
-                </button>
-              </div>
-            </>
-          )}
-          
-          {testResult && testResult.passed && showResult && (
-            <div 
-              className="bg-green-50 rounded-lg p-8 text-center border border-green-300 transition-all duration-700 ease-out h-[500px] flex flex-col items-center justify-center"
-              style={{
-                opacity: 0,
-                transform: 'translateY(-10px)',
-                animation: 'fadeInUp 0.6s ease-out forwards'
-              }}
-            >
-              <div className="flex flex-col items-center gap-4">
-                <CheckCircle2 
-                  className="w-16 h-16 text-green-600"
-                  style={{
-                    transform: showResult ? 'scale(1)' : 'scale(0.8)',
-                    transition: 'transform 0.5s ease-out 0.2s'
-                  }}
-                />
-                <p className="text-green-600 font-semibold text-xl">All tests passed!</p>
-                <p className="text-gray-500 text-sm">Completed at {testResult.timestamp}</p>
-              </div>
-            </div>
-          )}
-        </div>
+        <TestResultsPanel
+          testResult={testResult}
+          isRunning={isRunning}
+          showResult={showResult}
+          onReportToJira={handleReportToJira}
+        />
       </div>
     </div>
   );
