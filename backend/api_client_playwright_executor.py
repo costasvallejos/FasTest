@@ -1,7 +1,6 @@
 import os
 import logging
 
-from supabase import supabase
 from utils import (
     create_workspace,
     setup_testjs_workspace,
@@ -20,6 +19,8 @@ def execute_playwright_test(test_id: str) -> dict:
     Returns:
         dict with success status, output, and other test execution details
     """
+    from supabase_client import supabase
+
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 

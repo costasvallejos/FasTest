@@ -1,10 +1,6 @@
 import os
 from supabase import create_client, Client
 
-url: str = os.environ.get("SUPABASE_URL")
-key: str = os.environ.get("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
-
 # tests SCHEMA for reference:
 """
 create table public.tests (
@@ -43,6 +39,20 @@ create table public.runs (
 """
 
 
+def get_supabase_client() -> Client:
+    """
+    Get the Supabase client instance.
+
+    Returns:
+        Supabase Client
+    """
+    url: str = os.environ.get("SUPABASE_URL")
+    key: str = os.environ.get("SUPABASE_KEY")
+    supabase: Client = create_client(url, key)
+
+    return supabase
+
+
 def get_test_script(test_id: str) -> str | None:
     """
     Retrieve the test_script for a given test id.
@@ -53,6 +63,9 @@ def get_test_script(test_id: str) -> str | None:
     Returns:
         The test_script string if found, None otherwise
     """
+
+    supabase = get_supabase_client()
+
     result = (
         supabase.table("tests")
         .select("test_script")
