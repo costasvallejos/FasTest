@@ -9,7 +9,6 @@ from agents import ItemHelpers, StreamEvent
 
 
 successful_step_definition = r"""
-import { test } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
