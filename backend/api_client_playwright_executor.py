@@ -139,6 +139,25 @@ def execute_playwright_test(test_id: str) -> dict:
 
         logger.info(f"Test progress: {steps_completed}/{total_steps} steps ({progress_percentage:.1f}%)")
 
+        # Determine failing step if test failed
+        failing_step = None
+        failing_step_index = None
+
+        if not success:
+            logger.info("Test failed. Analyzing which step failed...")
+
+            # If we have a plan and completed fewer steps than planned
+            if test_plan and steps_completed < total_steps:
+                failing_step_index = steps_completed
+                failing_step = test_plan[failing_step_index]
+                logger.info(f"Failing step identified at index {failing_step_index}: {failing_step}")
+            elif test_plan and steps_completed == total_steps:
+                logger.info("All planned steps completed but test still failed (failure outside planned steps)")
+            else:
+                logger.info("No plan available or test failed before any steps executed")
+        else:
+            logger.info("Test passed successfully")
+
         # Cleanup logger handlers
         for handler in logger.handlers[:]:
             handler.close()
@@ -155,6 +174,8 @@ def execute_playwright_test(test_id: str) -> dict:
             "steps_completed": steps_completed,
             "total_steps": total_steps,
             "progress_percentage": progress_percentage,
+            "failing_step": failing_step,
+            "failing_step_index": failing_step_index,
             "workspace_dir": workspace_dir,
             "log_path": log_path,
             "execution_id": execution_id,
