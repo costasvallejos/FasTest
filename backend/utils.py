@@ -28,7 +28,7 @@ test.afterEach(async () => {
 """
 
 screenshot_on_failure = r"""
-test.afterAll(async ({ page }, testInfo) => {
+test.afterEach(async ({ page }, testInfo) => {
     console.log(`[Screenshot] Test status: ${testInfo.status}, Expected: ${testInfo.expectedStatus}`);
     if (testInfo.status !== testInfo.expectedStatus) {
         console.log('[Screenshot] Test failed, capturing screenshot...');
