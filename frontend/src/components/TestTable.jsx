@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import TestBar from './TestBar';
 
-export default function TestTable({ tests = [], onDelete }) {
+export default function TestTable({ tests = [], onDelete, searchQuery = '' }) {
     const [sortField, setSortField] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
 
@@ -24,7 +24,12 @@ export default function TestTable({ tests = [], onDelete }) {
             : <ChevronDown className="h-4 w-4 text-gray-600" />;
     };
 
-    const sortedTests = [...tests].sort((a, b) => {
+    // Filter tests based on search query
+    const filteredTests = tests.filter(test => 
+        test.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const sortedTests = [...filteredTests].sort((a, b) => {
         if (!sortField) return 0;
 
         let aValue = a[sortField];
@@ -137,7 +142,8 @@ export default function TestTable({ tests = [], onDelete }) {
             <div className="bg-gray-50 border-t border-gray-200 px-6 py-3">
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">
-                        {sortedTests.length}/{sortedTests.length} matches
+                        {sortedTests.length}/{tests.length} matches
+                        {searchQuery && ` for "${searchQuery}"`}
                     </span>
                 </div>
             </div>
