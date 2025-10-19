@@ -5,6 +5,7 @@ API endpoints for test generation service.
 """
 
 import os
+import tempfile
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -94,12 +95,17 @@ async def generate_test_endpoint(request: TestGenerationRequest):
     # Generate instance ID for logging
     instance_id = request.instance_id or str(uuid.uuid4())[:8]
 
+    # Determine log path
+    workspace_dir = os.path.join(tempfile.gettempdir(), f"playwright_test_{instance_id}")
+    log_path = os.path.join(workspace_dir, "logs", "request.log")
+
     # Log request start to main console
     print(f"\n{'='*80}")
     print("New test generation request started")
     print(f"Instance ID: {instance_id}")
     print(f"Target URL: {request.target_url}")
     print(f"Test Case: {request.test_case_description}")
+    print(f"Log Path: {log_path}")
     print(f"{'='*80}\n")
 
     try:
@@ -109,10 +115,6 @@ async def generate_test_endpoint(request: TestGenerationRequest):
             target_url=request.target_url,
             instance_id=instance_id,
         )
-
-        # Log workspace path
-        log_path = os.path.join(result["workspace_dir"], "logs", "request.log")
-        print(f"Log Path: {log_path}\n")
 
         # Build response
         test_script_path = os.path.join(
