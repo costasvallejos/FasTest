@@ -235,10 +235,8 @@ function TestCreate() {
     setShowJiraModal(false);
   };
 
-  const handleJiraModalConfirm = (issueData) => {
-    console.log('Creating Jira issue:', issueData);
-    // TODO: Implement actual Jira API call
-    setShowJiraModal(false);
+  const handleJiraModalConfirm = (response) => {
+    console.log('Jira issue created:', response);
   };
 
   const handleSaveTest = async () => {
