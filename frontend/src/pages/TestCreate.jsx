@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import { CheckCircle2, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
 import StepBlock from '../components/StepBlock';
 
 function TestCreate() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { id } = useParams();
+  const testData = location.state?.testData;
+  const isEditMode = !!id; // If there's an ID in the URL, we're in edit mode
   
   // State management
+  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [url, setUrl] = useState('');
   const [steps, setSteps] = useState([]);
@@ -16,6 +23,26 @@ function TestCreate() {
   const [stepStatuses, setStepStatuses] = useState({});
   const [showResult, setShowResult] = useState(false);
   const [showRunButton, setShowRunButton] = useState(false);
+
+  // Autofill form when editing an existing test
+  useEffect(() => {
+    if (testData && isEditMode) {
+      setName(testData.name || '');
+      setDescription(testData.description || '');
+      setUrl(testData.url || testData.target_url || '');
+      
+      // Load existing test steps from database
+      if (testData.plan && Array.isArray(testData.plan)) {
+        const existingSteps = testData.plan.map((stepText, index) => ({
+          id: index + 1,
+          type: 'step',
+          text: stepText
+        }));
+        setSteps(existingSteps);
+        setShowRunButton(true); // Show run button since steps already exist
+      }
+    }
+  }, [testData, isEditMode]);
 
   // Mock data for demonstration
   const mockSteps = [
@@ -128,6 +155,32 @@ function TestCreate() {
     alert('Jira ticket created successfully!');
   };
 
+  const handleSaveTest = async () => {
+    if (!isEditMode || !id) return;
+    
+    try {
+      const stepTexts = steps.map(step => step.text);
+      
+      const { error } = await supabase
+        .from('tests')
+        .update({
+          name: name,
+          description: description,
+          url: url,
+          plan: stepTexts
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      alert('Test updated successfully!');
+      navigate('/');
+    } catch (error) {
+      console.error('Error updating test:', error);
+      alert('Failed to update test. Please try again.');
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900">
       {/* Header with Back Button */}
@@ -139,7 +192,19 @@ function TestCreate() {
           <ArrowLeft className="w-4 h-4" />
           Back to Test Suite
         </button>
-        <div className="text-gray-400 text-sm">Test Creation</div>
+        <div className="flex items-center gap-4">
+          <div className="text-gray-400 text-sm">
+            {isEditMode ? 'Edit Test Configuration' : 'Test Creation'}
+          </div>
+          {isEditMode && (
+            <button
+              onClick={handleSaveTest}
+              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-medium hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg"
+            >
+              Save Changes
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Main Content */}
@@ -149,6 +214,19 @@ function TestCreate() {
           <h2 className="text-xl font-semibold text-gray-100 mb-4">Test Configuration</h2>
           
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Test Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter test name"
+                className="w-full p-3 border border-gray-600 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Test Description

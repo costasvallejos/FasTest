@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FlaskConical, Plus, X } from 'lucide-react';
 import { supabase } from '../supabase';
+import { generateTest } from '../backendApi/generateTest';
 
 const HeaderTest = ({ onTestCreated }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,6 +38,14 @@ const HeaderTest = ({ onTestCreated }) => {
 
     setIsSubmitting(true);
     try {
+      // USE THIS RESPONSE AND FILL IN THE DB WITH OUR ACTUAL DATA
+      const response = await generateTest({
+        target_url: formData.url.trim(),
+        test_case_description: formData.description.trim(),
+      });
+      console.log('Generated Test Response:', response);
+
+
       const { data, error } = await supabase
         .from('tests')
         .insert([

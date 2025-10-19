@@ -12,6 +12,7 @@ function App() {
         <Route path="/" element={<TestSuite />} />
         <Route path="/tests" element={<TestSuite />} />
         <Route path="/tests/create" element={<TestCreate />} />
+        <Route path="/tests/create/:id" element={<TestCreate />} />
         
         
         {/* Dashboard - teammate's work */}
