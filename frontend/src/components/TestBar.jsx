@@ -32,112 +32,104 @@ export default function TestBar({ test, onDelete }) {
     // Breathing loading state with actual data
     if (test.isLoading) {
         return (
-            <div className="border-b border-gray-200 last:border-b-0">
-                <div className="px-6 py-4 flex items-center">
-                    {/* Test Name - 35% width */}
-                    <div className="flex-1 min-w-0 pr-6">
-                        <h3 className="text-sm font-medium text-gray-900 truncate animate-breathing">
-                            {test.name || 'Test Name'}
-                        </h3>
+            <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3 whitespace-nowrap">
+                    <h3 className="text-sm font-medium text-gray-900 truncate animate-breathing">
+                        {test.name || 'Test Name'}
+                    </h3>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-2 animate-breathing">
+                        <Globe className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm text-gray-600">Web</span>
                     </div>
-
-                    {/* Platform - 15% width */}
-                    <div className="flex-shrink-0 w-24 pr-8">
-                        <div className="flex items-center gap-2 animate-breathing">
-                            <Globe className="h-4 w-4 text-blue-600" />
-                            <span className="text-sm text-gray-600">Web</span>
-                        </div>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                    <span className="text-sm text-gray-700 truncate animate-breathing">
+                        {test.target_url || 'https://example.com'}
+                    </span>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5 border bg-blue-100 border-blue-300 w-fit">
+                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs font-medium text-blue-600">Loading...</span>
                     </div>
-
-                    {/* Execution Target - 30% width */}
-                    <div className="flex-1 min-w-0 pr-6">
-                        <span className="text-sm text-gray-700 truncate animate-breathing">
-                            {test.target_url || 'https://example.com'}
-                        </span>
-                    </div>
-
-                    {/* Status - 15% width */}
-                    <div className="flex-shrink-0 pr-6">
-                        <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5 border bg-blue-100 border-blue-300">
-                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                            <span className="text-xs font-medium text-blue-600">Loading...</span>
-                        </div>
-                    </div>
-
-                    {/* Actions - 5% width */}
-                    <div className="flex-shrink-0 flex items-center gap-2">
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                    <span className="text-sm text-gray-700 animate-breathing">
+                        N/A
+                    </span>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
                         <div className="h-6 w-6 bg-gray-200 rounded animate-breathing"></div>
                         <div className="h-6 w-6 bg-gray-200 rounded animate-breathing"></div>
                         <div className="h-6 w-6 bg-gray-200 rounded animate-breathing"></div>
                     </div>
-                </div>
-            </div>
+                </td>
+            </tr>
         );
     }
 
     return (
-        <div className="border-b border-gray-200 hover:bg-gray-50 transition-colors last:border-b-0">
-            <div className="px-6 py-4 flex items-center">
-                {/* Test Name - 35% width */}
-                <div className="flex-1 min-w-0 pr-6">
-                    <h3 className={`text-sm font-medium text-gray-900 truncate ${test.animateIn ? 'animate-slideInFade' : ''}`} style={test.animateIn ? {animationDelay: '0.1s'} : {}}>
-                        {test.name || 'Test Name'}
-                    </h3>
+        <tr className="hover:bg-gray-50">
+            <td className="px-4 py-3 whitespace-nowrap">
+                <h3 className={`text-sm font-medium text-gray-900 truncate ${test.animateIn ? 'animate-slideInFade' : ''}`} style={test.animateIn ? {animationDelay: '0.1s'} : {}}>
+                    {test.name || 'Test Name'}
+                </h3>
+            </td>
+            <td className="px-4 py-3 whitespace-nowrap">
+                <div className={`flex items-center gap-2 ${test.animateIn ? 'animate-slideInFade' : ''}`} style={test.animateIn ? {animationDelay: '0.2s'} : {}}>
+                    <Globe className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm text-gray-600">Web</span>
                 </div>
-
-                {/* Platform - 15% width */}
-                <div className="flex-shrink-0 w-24 pr-8">
-                    <div className={`flex items-center gap-2 ${test.animateIn ? 'animate-slideInFade' : ''}`} style={test.animateIn ? {animationDelay: '0.2s'} : {}}>
-                        <Globe className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm text-gray-600">Web</span>
-                    </div>
-                </div>
-
-                {/* Execution Target - 30% width */}
-                <div className="flex-1 min-w-0 pr-6">
-                    <span className={`text-sm text-gray-700 truncate ${test.animateIn ? 'animate-slideInFade' : ''}`} style={test.animateIn ? {animationDelay: '0.3s'} : {}}>
-                        {test.target_url || 'https://example.com'}
+            </td>
+            <td className="px-4 py-3 whitespace-nowrap">
+                <span className={`text-sm text-gray-700 truncate ${test.animateIn ? 'animate-slideInFade' : ''}`} style={test.animateIn ? {animationDelay: '0.3s'} : {}}>
+                    {test.target_url || 'https://example.com'}
+                </span>
+            </td>
+            <td className="px-4 py-3 whitespace-nowrap">
+                <div className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 border ${
+                    test.isLoading ? 'bg-blue-100 border-blue-300' :
+                    test.status === 'Error' ? 'bg-red-100 border-red-300' :
+                    test.last_passed === true ? 'bg-green-100 border-green-300' :
+                    test.last_passed === false ? 'bg-red-100 border-red-300' :
+                    'bg-gray-100 border-gray-300'
+                }`}>
+                    {test.isLoading ? (
+                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                    ) : test.status === 'Error' ? (
+                        <XCircle className="h-3 w-3 text-red-600" />
+                    ) : test.last_passed === true ? (
+                        <CheckCircle className="h-3 w-3 text-green-600" />
+                    ) : test.last_passed === false ? (
+                        <XCircle className="h-3 w-3 text-red-600" />
+                    ) : (
+                        <Clock className="h-3 w-3 text-gray-600" />
+                    )}
+                    <span className={`text-xs font-medium ${
+                        test.isLoading ? 'text-blue-600' :
+                        test.status === 'Error' ? 'text-red-600' :
+                        test.last_passed === true ? 'text-green-600' :
+                        test.last_passed === false ? 'text-red-600' :
+                        'text-gray-600'
+                    }`}>
+                        {test.isLoading ? 'Loading...' :
+                         test.status === 'Error' ? 'Error' :
+                         test.last_passed === true ? 'Passing' :
+                         test.last_passed === false ? 'Failing' :
+                         'Not Run'}
                     </span>
                 </div>
-
-                {/* Status - 15% width */}
-                <div className="flex-shrink-0 pr-6">
-                    <div className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 border ${
-                        test.isLoading ? 'bg-blue-100 border-blue-300' :
-                        test.status === 'Error' ? 'bg-red-100 border-red-300' :
-                        test.last_passed === true ? 'bg-green-100 border-green-300' :
-                        test.last_passed === false ? 'bg-red-100 border-red-300' :
-                        'bg-gray-100 border-gray-300'
-                    }`}>
-                        {test.isLoading ? (
-                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                        ) : test.status === 'Error' ? (
-                            <XCircle className="h-3 w-3 text-red-600" />
-                        ) : test.last_passed === true ? (
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                        ) : test.last_passed === false ? (
-                            <XCircle className="h-3 w-3 text-red-600" />
-                        ) : (
-                            <Clock className="h-3 w-3 text-gray-600" />
-                        )}
-                        <span className={`text-xs font-medium ${
-                            test.isLoading ? 'text-blue-600' :
-                            test.status === 'Error' ? 'text-red-600' :
-                            test.last_passed === true ? 'text-green-600' :
-                            test.last_passed === false ? 'text-red-600' :
-                            'text-gray-600'
-                        }`}>
-                            {test.isLoading ? 'Loading...' :
-                             test.status === 'Error' ? 'Error' :
-                             test.last_passed === true ? 'Passing' :
-                             test.last_passed === false ? 'Failing' :
-                             'Not Run'}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Actions - 5% width */}
-                <div className="flex-shrink-0 flex items-center gap-2">
+            </td>
+            <td className="px-4 py-3 whitespace-nowrap">
+                <span className="text-sm text-gray-700">
+                    N/A
+                </span>
+            </td>
+            <td className="px-4 py-3 whitespace-nowrap">
+                <div className="flex items-center gap-2">
                     <button 
                         onClick={handleEdit}
                         className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
@@ -159,7 +151,7 @@ export default function TestBar({ test, onDelete }) {
                         <Delete className="h-4 w-4 text-red-600" />
                     </button>
                 </div>
-            </div>
-        </div>
+            </td>
+        </tr>
     )
 }
