@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase, fetchTestById, updateTestOnSuccess, updateTestOnFailure } from '../supabase';
+import { supabase, fetchTestById, updateTestOnSuccess, updateTestOnFailure, getScreenshotUrl } from '../supabase';
 import { executeTest } from '../backendApi/generateTest';
 import { useTestGeneration } from '../hooks/useTestGeneration';
 import TestHeader from '../components/TestHeader';
@@ -90,12 +90,14 @@ function TestCreate() {
                   timestamp: new Date(data.last_run_at).toLocaleTimeString()
                 });
               } else {
+                const screenshotUrl = data.last_screenshot_id ? getScreenshotUrl(data.last_screenshot_id) : null;
                 setTestResult({
                   passed: false,
                   failedStep: data.last_error_index !== null ? data.last_error_index + 1 : undefined,
                   errorMessage: data.last_error_step || 'Test execution failed',
                   message: data.last_error_message || `Test failed${data.last_error_index !== null ? ` at step ${data.last_error_index + 1}` : ''}`,
-                  timestamp: new Date(data.last_run_at).toLocaleTimeString()
+                  timestamp: new Date(data.last_run_at).toLocaleTimeString(),
+                  screenshot: screenshotUrl
                 });
               }
 
@@ -185,19 +187,23 @@ function TestCreate() {
         const statuses = calculateStepStatuses(false, failedStepIndex, steps);
         setStepStatuses(statuses);
 
+        const screenshotUrl = response.screenshot_id ? getScreenshotUrl(response.screenshot_id) : null;
+
         setTestResult({
           passed: false,
           failedStep: failedStepIndex !== null ? failedStepIndex + 1 : undefined,
           errorMessage: response.failing_step || 'Test execution failed',
           message: response.output || `Test failed${failedStepIndex !== null ? ` at step ${failedStepIndex + 1}` : ''}`,
-          timestamp: new Date().toLocaleTimeString()
+          timestamp: new Date().toLocaleTimeString(),
+          screenshot: screenshotUrl
         });
 
         // Update database with failure information
         await updateTestOnFailure(id, {
           errorMessage: response.output,
           errorStep: response.failing_step,
-          errorIndex: response.failing_step_index
+          errorIndex: response.failing_step_index,
+          screenshotId: response.screenshot_id
         });
 
         // Show Jira modal when test fails

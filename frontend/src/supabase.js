@@ -44,7 +44,7 @@ export async function updateTestOnSuccess(testId) {
   }
 }
 
-export async function updateTestOnFailure(testId, { errorMessage, errorStep, errorIndex }) {
+export async function updateTestOnFailure(testId, { errorMessage, errorStep, errorIndex, screenshotId }) {
   const { error } = await supabase
     .from('tests')
     .update({
@@ -52,7 +52,8 @@ export async function updateTestOnFailure(testId, { errorMessage, errorStep, err
       last_passed: false,
       last_error_message: errorMessage,
       last_error_step: errorStep,
-      last_error_index: errorIndex
+      last_error_index: errorIndex,
+      last_screenshot_id: screenshotId
     })
     .eq('id', testId);
 
@@ -60,4 +61,15 @@ export async function updateTestOnFailure(testId, { errorMessage, errorStep, err
     console.error('Error updating test on failure:', error);
     throw error;
   }
+}
+
+export function getScreenshotUrl(screenshotId) {
+  if (!screenshotId) return null;
+
+  const { data } = supabase
+    .storage
+    .from('Screenshots')
+    .getPublicUrl(screenshotId);
+
+  return data?.publicUrl || null;
 }
