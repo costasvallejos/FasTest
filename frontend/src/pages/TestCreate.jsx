@@ -6,6 +6,7 @@ import TestHeader from '../components/TestHeader';
 import TestConfigurationPanel from '../components/TestConfigurationPanel';
 import TestStepsPanel from '../components/TestStepsPanel';
 import TestResultsPanel from '../components/TestResultsPanel';
+import JiraIssueModal from '../components/JiraIssueModal';
 
 function TestCreate() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ function TestCreate() {
   const [stepStatuses, setStepStatuses] = useState({});
   const [showResult, setShowResult] = useState(false);
   const [showRunButton, setShowRunButton] = useState(false);
+  const [showJiraModal, setShowJiraModal] = useState(false);
 
   // Fetch test data when editing an existing test
   useEffect(() => {
@@ -145,11 +147,15 @@ function TestCreate() {
           timestamp: new Date().toLocaleTimeString()
         });
 
+        // Update database with failure information
         await updateTestOnFailure(id, {
           errorMessage: response.output,
           errorStep: response.failing_step,
           errorIndex: response.failing_step_index
         });
+
+        // Show Jira modal when test fails
+        setShowJiraModal(true);
       }
 
       setIsRunning(false);
@@ -174,6 +180,17 @@ function TestCreate() {
     console.log('Reporting to Jira...');
     // TODO: Implement Jira reporting
     alert('Jira ticket created successfully!');
+  };
+
+  const handleJiraModalClose = () => {
+    setShowJiraModal(false);
+  };
+
+  const handleJiraModalConfirm = (issueData) => {
+    console.log('Creating Jira issue:', issueData);
+    // TODO: Implement actual Jira API call
+    alert(`Jira issue created: ${issueData.name}`);
+    setShowJiraModal(false);
   };
 
   const handleSaveTest = async () => {
@@ -239,6 +256,15 @@ function TestCreate() {
           onReportToJira={handleReportToJira}
         />
       </div>
+
+      <JiraIssueModal
+        isOpen={showJiraModal}
+        onClose={handleJiraModalClose}
+        onConfirm={handleJiraModalConfirm}
+        testName={name}
+        testDescription={description}
+      />
+      {showJiraModal && console.log('Modal props:', { showJiraModal, name, description })}
     </div>
   );
 }

@@ -132,19 +132,19 @@ export default function TestBar({ test, onDelete }) {
                 <div className="flex items-center gap-2">
                     <button 
                         onClick={handleEdit}
-                        className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="p-2 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors"
                         title="Edit test"
                     >
                         <Wrench className="h-4 w-4 text-gray-600" />
                     </button>
                     <button 
-                        className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="p-2 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors"
                         title="Run test"
                     >
                         <Play className="h-4 w-4 text-gray-600" />
                     </button>
                     <button 
-                        className="p-2 hover:bg-red-100 rounded-lg transition-colors" 
+                        className="p-2 bg-white hover:bg-red-50 border border-gray-200 rounded-lg transition-colors" 
                         onClick={() => handleDelete(test.id)}
                         title="Delete test"
                     >
