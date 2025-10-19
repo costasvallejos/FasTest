@@ -55,6 +55,8 @@ class TestExecutionResponse(BaseModel):
     output: str
     test_id: str
     test_plan: Optional[list[str]] = None
+    failing_step: Optional[str] = None
+    failing_step_index: Optional[int] = None
 
 
 @app.get("/")
@@ -175,7 +177,8 @@ async def execute_test_endpoint(request: TestExecutionRequest):
 
     if not os.getenv("SUPABASE_URL") or not os.getenv("SUPABASE_KEY"):
         raise HTTPException(
-            status_code=500, detail="SUPABASE_URL and SUPABASE_KEY not configured on server"
+            status_code=500,
+            detail="SUPABASE_URL and SUPABASE_KEY not configured on server",
         )
 
     try:
@@ -199,6 +202,8 @@ async def execute_test_endpoint(request: TestExecutionRequest):
             output=result["output"],
             test_id=result["test_id"],
             test_plan=result.get("test_plan"),
+            failing_step=result.get("failing_step"),
+            failing_step_index=result.get("failing_step_index"),
         )
 
     except ValueError as e:

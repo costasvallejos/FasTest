@@ -79,15 +79,16 @@ const HeaderTest = ({ onTestCreated }) => {
           }
         ])
         .select();
+      const supabaseResponse = data[0];
       
-      console.log('Supabase Insert Response:', data, error);
+      console.log('Supabase Insert Response:', supabaseResponse, error);
 
       if (error) throw error;
 
       // Update the loading test with real data
       if (onTestCreated) {
         onTestCreated({
-          ...data[0],
+          ...supabaseResponse,
           isLoading: false,
           status: 'Not Run',
           animateIn: true // Flag to trigger slide-in animation
