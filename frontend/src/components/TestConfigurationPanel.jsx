@@ -1,10 +1,7 @@
 function TestConfigurationPanel({
   name,
-  setName,
   description,
-  setDescription,
   url,
-  setUrl,
   isGenerating,
   onGenerate
 }) {
@@ -13,43 +10,31 @@ function TestConfigurationPanel({
       <h2 className="text-xl font-semibold text-gray-700 mb-4">Test Configuration</h2>
 
       <div className="space-y-4">
-        <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Test Name
           </label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter test name"
-            className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
-          />
+          <div className="w-full p-3 bg-gray-100 text-gray-700 rounded-lg border border-gray-200">
+            {name || 'No test name'}
+          </div>
         </div>
 
-        <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Test Description
           </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="e.g., Check that a user can reset their password"
-            className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
-            rows={3}
-          />
+          <div className="w-full p-3 bg-gray-100 text-gray-700 rounded-lg border border-gray-200 min-h-[80px]">
+            {description || 'No description'}
+          </div>
         </div>
 
-        <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Page URL
           </label>
-          <input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://example.com/login"
-            className="w-full p-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors"
-          />
+          <div className="w-full p-3 bg-gray-100 text-gray-700 rounded-lg border border-gray-200">
+            {url || 'No URL'}
+          </div>
         </div>
 
         <button

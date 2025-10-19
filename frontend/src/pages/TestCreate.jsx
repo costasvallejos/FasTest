@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase, fetchTestById, updateTestOnSuccess, updateTestOnFailure, getScreenshotUrl } from '../supabase';
+import { fetchTestById, updateTestOnSuccess, updateTestOnFailure, getScreenshotUrl } from '../supabase';
 import { executeTest } from '../backendApi/generateTest';
 import { useTestGeneration } from '../hooks/useTestGeneration';
 import TestHeader from '../components/TestHeader';
@@ -13,7 +13,6 @@ import smallLogo from '../assets/logo3.png';
 function TestCreate() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const isEditMode = !!id; // If there's an ID in the URL, we're in edit mode
   const { generate, isGenerating } = useTestGeneration();
 
   // State management
@@ -55,10 +54,10 @@ function TestCreate() {
     return statuses;
   };
 
-  // Fetch test data when editing an existing test
+  // Fetch test data when viewing an existing test
   useEffect(() => {
     async function loadTestData() {
-      if (isEditMode && id) {
+      if (id) {
         try {
           const data = await fetchTestById(id);
           setName(data.name || '');
@@ -114,7 +113,7 @@ function TestCreate() {
     }
 
     loadTestData();
-  }, [id, isEditMode, navigate]);
+  }, [id, navigate]);
 
   const handleGenerate = async () => {
     if (!name.trim() || !url.trim() || !description.trim()) {
@@ -241,48 +240,18 @@ function TestCreate() {
     setShowJiraModal(false);
   };
 
-  const handleSaveTest = async () => {
-    if (!isEditMode || !id) return;
-    
-    try {
-      const stepTexts = steps.map(step => step.text);
-      
-      const { error } = await supabase
-        .from('tests')
-        .update({
-          name: name,
-          description: description,
-          url: url,
-          plan: stepTexts
-        })
-        .eq('id', id);
-
-      if (error) throw error;
-      
-      alert('Test updated successfully!');
-      navigate('/');
-    } catch (error) {
-      console.error('Error updating test:', error);
-      alert('Failed to update test. Please try again.');
-    }
-  };
 
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-50" style={{ scrollBehavior: 'smooth' }}>
       <TestHeader
         onBack={() => navigate('/')}
-        isEditMode={isEditMode}
-        onSave={handleSaveTest}
       />
 
       <div className="flex-1 flex">
         <TestConfigurationPanel
           name={name}
-          setName={setName}
           description={description}
-          setDescription={setDescription}
           url={url}
-          setUrl={setUrl}
           isGenerating={isGenerating}
           onGenerate={handleGenerate}
         />

@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 
-function TestHeader({ onBack, isEditMode, onSave }) {
+function TestHeader({ onBack }) {
   return (
     <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
       <button
@@ -12,16 +12,8 @@ function TestHeader({ onBack, isEditMode, onSave }) {
       </button>
       <div className="flex items-center gap-4">
         <div className="text-gray-600 text-sm">
-          {isEditMode ? 'Edit Test Configuration' : 'Test Creation'}
+          Test Configuration
         </div>
-        {isEditMode && (
-          <button
-            onClick={onSave}
-            className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-medium hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg"
-          >
-            Save Changes
-          </button>
-        )}
       </div>
     </div>
   );
