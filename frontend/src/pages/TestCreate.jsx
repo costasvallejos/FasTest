@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabase';
+import { supabase, fetchTestById } from '../supabase';
 import TestHeader from '../components/TestHeader';
 import TestConfigurationPanel from '../components/TestConfigurationPanel';
 import TestStepsPanel from '../components/TestStepsPanel';
@@ -9,9 +9,7 @@ import TestResultsPanel from '../components/TestResultsPanel';
 
 function TestCreate() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { id } = useParams();
-  const testData = location.state?.testData;
   const isEditMode = !!id; // If there's an ID in the URL, we're in edit mode
   
   // State management
@@ -26,25 +24,36 @@ function TestCreate() {
   const [showResult, setShowResult] = useState(false);
   const [showRunButton, setShowRunButton] = useState(false);
 
-  // Autofill form when editing an existing test
+  // Fetch test data when editing an existing test
   useEffect(() => {
-    if (testData && isEditMode) {
-      setName(testData.name || '');
-      setDescription(testData.description || '');
-      setUrl(testData.url || testData.target_url || '');
-      
-      // Load existing test steps from database
-      if (testData.plan && Array.isArray(testData.plan)) {
-        const existingSteps = testData.plan.map((stepText, index) => ({
-          id: index + 1,
-          type: 'step',
-          text: stepText
-        }));
-        setSteps(existingSteps);
-        setShowRunButton(true); // Show run button since steps already exist
+    async function loadTestData() {
+      if (isEditMode && id) {
+        try {
+          const data = await fetchTestById(id);
+          setName(data.name || '');
+          setDescription(data.description || '');
+          setUrl(data.url || data.target_url || '');
+
+          // Load existing test steps from database
+          if (data.plan && Array.isArray(data.plan)) {
+            const existingSteps = data.plan.map((stepText, index) => ({
+              id: index + 1,
+              type: 'step',
+              text: stepText
+            }));
+            setSteps(existingSteps);
+            setShowRunButton(true);
+          }
+        } catch (error) {
+          console.error('Error loading test:', error);
+          alert('Failed to load test data. Please try again.');
+          navigate('/');
+        }
       }
     }
-  }, [testData, isEditMode]);
+
+    loadTestData();
+  }, [id, isEditMode, navigate]);
 
   const handleGenerate = () => {
     setIsGenerating(true);
