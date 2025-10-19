@@ -11,7 +11,7 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
     url: '',
     description: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmitting = false;
 
   const handleCreate = () => {
     setIsModalOpen(true);
@@ -55,7 +55,7 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
       onTestCreated(loadingTest);
     }
 
-    setIsSubmitting(true);
+    // setIsSubmitting(true);
     try {
       console.log('Sending generateTest request', {
         target_url: formData.url.trim(),
@@ -113,7 +113,7 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
       }
       alert('Failed to create test. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      // setIsSubmitting(false);
     }
   };
 
