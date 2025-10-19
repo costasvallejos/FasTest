@@ -72,10 +72,6 @@ function JiraIssueModal({ isOpen, onClose, onConfirm, testName, testDescription,
       if (onConfirm) {
         onConfirm(response);
       }
-
-      setTimeout(() => {
-        onClose();
-      }, 2000);
     } catch (err) {
       console.error('Failed to create Jira issue:', err);
       setError(err.message || 'Failed to create Jira issue. Please try again.');
