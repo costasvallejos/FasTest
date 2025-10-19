@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FlaskConical, Plus, X } from 'lucide-react';
 import { supabase } from '../supabase';
 import { generateTest } from '../backendApi/generateTest';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo3.png';
 
 const HeaderTest = ({ onTestCreated, onRefresh }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,7 +126,7 @@ const HeaderTest = ({ onTestCreated, onRefresh }) => {
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center">
               <FlaskConical className="h-6 w-6 text-white" />
             </div>
-            <img src={logo} alt="Logo" className="h-20 w-46" />
+            <img src={logo} alt="Logo" className="h-28 w-54" />
           </div>
 
           {/* Right Section - Create Button */}
