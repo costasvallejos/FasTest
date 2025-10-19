@@ -247,7 +247,7 @@ export default function TestSuiteDashboard() {
       <section className="px-6 md:px-10 pb-10">
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="overflow-auto">
-            <table className="min-w-full text-sm">
+            <table className="min-w-full text-sm border-collapse">
               <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr className="text-left text-gray-600">
                   <Th onClick={() => onSort('name')} active={sort.startsWith('name')}>Test Name</Th>
