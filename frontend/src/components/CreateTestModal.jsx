@@ -22,8 +22,8 @@ export default function CreateTestModal({ open, onOpenChange }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl p-6 w-full max-w-md z-50">
+        <Dialog.Overlay className="fixed inset-0 backdrop-blur-sm z-40" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-8 w-[500px] max-w-2xl mx-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-gray-200 z-50">
           <Dialog.Title className="text-2xl font-bold text-gray-900 mb-2">
             Create New Test
           </Dialog.Title>
