@@ -214,7 +214,7 @@ function TestCreate() {
           <h2 className="text-xl font-semibold text-gray-100 mb-4">Test Configuration</h2>
           
           <div className="space-y-4">
-            <div>
+            <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Test Name
               </label>
@@ -223,11 +223,11 @@ function TestCreate() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter test name"
-                className="w-full p-3 border border-gray-600 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-500 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
-            <div>
+            <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Test Description
               </label>
@@ -235,12 +235,12 @@ function TestCreate() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="e.g., Check that a user can reset their password"
-                className="w-full p-3 border border-gray-600 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-500 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows={3}
               />
             </div>
 
-            <div>
+            <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Page URL
               </label>
@@ -249,7 +249,7 @@ function TestCreate() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com/login"
-                className="w-full p-3 border border-gray-600 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-500 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
