@@ -38,6 +38,10 @@ const HeaderTest = ({ onTestCreated }) => {
 
     setIsSubmitting(true);
     try {
+      console.log('Sending generateTest request', {
+        target_url: formData.url.trim(),
+        test_case_description: formData.description.trim(),
+      });
       // USE THIS RESPONSE AND FILL IN THE DB WITH OUR ACTUAL DATA
       const response = await generateTest({
         target_url: formData.url.trim(),
