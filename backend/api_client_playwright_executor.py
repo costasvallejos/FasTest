@@ -1,7 +1,7 @@
 import os
 import logging
 
-from supabase import supabase
+import supabase as supabase_module
 from utils import (
     create_workspace,
     setup_testjs_workspace,
@@ -26,7 +26,7 @@ def execute_playwright_test(test_id: str) -> dict:
     try:
         # Fetch test data from Supabase
         result = (
-            supabase.table("tests")
+            supabase_module.supabase.table("tests")
             .select("test_script, plan")
             .eq("id", test_id)
             .single()
