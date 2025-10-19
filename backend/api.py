@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from api_client_test_writer import generate_test_for_api
+from api_client_playwright_executor import execute_playwright_test
 from utils import cleanup_workspace as cleanup_workspace_util
 
 app = FastAPI(title="E2E Test Generator API")
@@ -29,6 +30,21 @@ class TestGenerationResponse(BaseModel):
     test_plan: list[str]
     test_script: str
     status: str
+
+
+class TestExecutionRequest(BaseModel):
+    """Request model for test execution."""
+
+    test_id: str
+
+
+class TestExecutionResponse(BaseModel):
+    """Response model for test execution."""
+
+    success: bool
+    output: str
+    test_id: str
+    test_plan: Optional[list[str]] = None
 
 
 @app.get("/")
@@ -130,6 +146,38 @@ async def cleanup_workspace(instance_id: str, keep_tests: bool = False):
         "message": f"Workspace cleaned for instance {instance_id}",
         "kept_tests": keep_tests,
     }
+
+
+@app.post("/execute-test", response_model=TestExecutionResponse)
+async def execute_test_endpoint(request: TestExecutionRequest):
+    """
+    Execute a Playwright test from the database.
+
+    Args:
+        request: Test execution request with test ID
+
+    Returns:
+        TestExecutionResponse with success status, output, and test plan
+    """
+    print(f"\n{'='*80}")
+    print("Test execution request started")
+    print(f"Test ID: {request.test_id}")
+    print(f"{'='*80}\n")
+
+    try:
+        result = execute_playwright_test(request.test_id)
+
+        return TestExecutionResponse(
+            success=result["success"],
+            output=result["output"],
+            test_id=result["test_id"],
+            test_plan=result.get("test_plan"),
+        )
+
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Test execution failed: {str(e)}")
 
 
 if __name__ == "__main__":
