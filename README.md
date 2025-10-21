@@ -9,3 +9,12 @@ FasTest help automate tests for fast-paced teams. Developers can define each tes
 To build FasTest, we combined OpenAPI agents and the playwright MCP to allow an LLM to analyze test situations in depth, and then save concrete playwright tests based on their exploration. We deploy a containerized service to run these playwright tests remotely so that our developers never spend time setting up test environments. These tests stay in sync with Jira, creating issues for each failing test case to integrate directly into the developer workflow. Finally, we send these test results to our frontend, along with screenshots of failing test states and natural language descriptions of each failing test step.
 
 
+**Demo Pictures**
+
+DASHBOARD PICTURE 
+
+This is our Test Suite page the user sees once they open FasTest. It gives you an overview of all of your previous tests, their status and also allows you to create your new tests here. From this page, the user can also configure and dive deeper in each test by simply clicking on it.
+
+<img width="3248" height="1704" alt="Test Configuration UI " src="https://github.com/user-attachments/assets/5a942136-8bed-4700-8ae1-cadc8628113d" />
+
+This is our Testing page the user sees once they click to configure each test. Here the user can run the test, as well as see a detailed steps our program runs through. The result of the test is shown on the right and if the test fails, you are given a screenshot alongside the step it failed at. The test can also be edited on the left side should the user wish to modify it. 
